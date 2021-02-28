@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/page_home">
+
+    <fragment android:id="@+id/page_home"
+        android:name="app.doggy.la_original.HomeFragment"
+        android:label="Fragment1"/>
+
+    <fragment android:id="@+id/page_list"
+        android:name="app.doggy.la_original.ListFragment"
+        android:label="Fragment2"/>
+
+    <fragment android:id="@+id/page_calendar"
+        android:name="app.doggy.la_original.CalendarFragment"
+        android:label="Fragment3"/>
+
+    <fragment android:id="@+id/page_chart"
+        android:name="app.doggy.la_original.ChartFragment"
+        android:label="Fragment4"/>
+</navigation>

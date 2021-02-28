@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">LA_Original</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--Bottom Navigation-->
+    <string name="text_label_home">Home</string>
+    <string name="text_label_list">List</string>
+    <string name="text_label_calendar">Calendar</string>
+    <string name="text_label_chart">Chart</string>
 </resources>
