@@ -8,4 +8,16 @@
     <string name="text_label_list">List</string>
     <string name="text_label_calendar">Calendar</string>
     <string name="text_label_chart">Chart</string>
+
+    <!--PostActivity-->
+    <string name="actual_value_edit_hint">Actual Value</string>
+    <string name="perceived_value_edit_hint">Perceived Value</string>
+    <string name="comment_edit_hint">Comment</string>
+    <string name="date_edit_hint">Date</string>
+    <string name="presets_caption">Presets</string>
+    <string name="submit_button_text">Submit</string>
+
+    <!--HomeFragment-->
+    <string name="period_caption">Period: </string>
+    <string name="total_savings_caption">Total: </string>
 </resources>
