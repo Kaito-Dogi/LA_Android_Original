@@ -3,18 +3,15 @@ package app.doggy.la_original
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.fragment_home.*
-import java.util.*
 
 class HomeFragment : Fragment() {
 
@@ -55,6 +52,7 @@ class HomeFragment : Fragment() {
         }
 
         totalSavingsTextView.text = "¥" + totalSavings.toString()
+
     }
 
     override fun onDestroy() {
@@ -74,4 +72,5 @@ class HomeFragment : Fragment() {
         }
         return calculateTotal
     }
+
 }

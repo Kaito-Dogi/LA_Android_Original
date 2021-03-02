@@ -1,32 +1,22 @@
 package app.doggy.la_original
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import io.realm.Realm
+import io.realm.RealmResults
+import io.realm.Sort
+import kotlinx.android.synthetic.main.fragment_calendar.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [CalendarFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CalendarFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    private val realm: Realm by lazy {
+        Realm.getDefaultInstance()
     }
 
     override fun onCreateView(
@@ -37,23 +27,29 @@ class CalendarFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_calendar, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CalendarFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CalendarFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val recordList = readAll()
+
+        val adapter = RecordAdapter(context as Context, recordList, true)
+
+        recordRecyclerViewInCalendar.setHasFixedSize(true)
+        recordRecyclerViewInCalendar.layoutManager = LinearLayoutManager(context)
+        recordRecyclerViewInCalendar.adapter = adapter
+
+        //カレンダーの日付のクリックイベント設定
+        calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
+            Toast.makeText(context, "" + year + "-" + (month+1) + "-" + dayOfMonth, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
+    }
+
+    private fun readAll(): RealmResults<Record> {
+        return realm.where(Record::class.java).findAll().sort("createdAt", Sort.ASCENDING)
     }
 }
