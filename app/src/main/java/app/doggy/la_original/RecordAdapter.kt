@@ -31,8 +31,7 @@ class RecordAdapter(
             else -> holder.savingsTextView.setTextColor(Color.parseColor("#222222"))
         }
         holder.savingsTextView.text = "¥" + (record.perceivedValue - record.actualValue).toString()
-        holder.dateTextView.text =
-            SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.JAPANESE).format(record.createdAt)
+        //holder.dateTextView.text = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.JAPANESE).format(record.createdAt)
 
     }
 
@@ -44,7 +43,7 @@ class RecordAdapter(
     class TaskViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val commentTextView: TextView = view.commentTextView
         val savingsTextView: TextView = view.savingsTextView
-        val dateTextView: TextView = view.dateTextView
+        //val dateTextView: TextView = view.dateTextView
     }
 
 }

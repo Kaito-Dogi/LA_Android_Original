@@ -17,6 +17,11 @@
     <string name="date_edit_hint">Date</string>
     <string name="presets_caption">Presets</string>
     <string name="submit_button_text">Submit</string>
+    
+    <string name="text_choice_all">All</string>
+    <string name="text_choice_weekly">Weekly</string>
+    <string name="text_choice_monthly">Monthly</string>
+    <string name="text_choice_yearly">Yearly</string>
 
     <!--HomeFragment-->
     <string name="period_caption">Period: </string>

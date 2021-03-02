@@ -7,6 +7,21 @@
     android:orientation="vertical"
     tools:context=".PostActivity">
 
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="満足度" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/slider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stepSize="1"
+        android:value="0"
+        android:valueFrom="-100"
+        android:valueTo="100" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/actualValueTextField"
         android:layout_width="match_parent"
@@ -116,5 +131,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:padding="12dp"
-        android:text="@string/submit_button_text" />
+        android:text="@string/submit_button_text"
+        app:cornerRadius="32dp" />
 </LinearLayout>

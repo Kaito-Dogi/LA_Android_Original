@@ -12,6 +12,7 @@ import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.fragment_calendar.*
+import java.util.*
 
 class CalendarFragment : Fragment() {
 
@@ -32,6 +33,10 @@ class CalendarFragment : Fragment() {
 
         val recordList = readAll()
 
+        if (recordList.isEmpty()) {
+            createDummy()
+        }
+
         val adapter = RecordAdapter(context as Context, recordList, true)
 
         recordRecyclerViewInCalendar.setHasFixedSize(true)
@@ -47,6 +52,19 @@ class CalendarFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
+    }
+
+    private fun createDummy() {
+        for (i in 0..9) {
+            create("支出$i")
+        }
+    }
+
+    private fun create(comment: String) {
+        realm.executeTransaction {
+            val item = it.createObject(Record::class.java, UUID.randomUUID().toString())
+            item.comment = comment
+        }
     }
 
     private fun readAll(): RealmResults<Record> {
