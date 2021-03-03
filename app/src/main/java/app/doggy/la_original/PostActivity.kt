@@ -82,10 +82,40 @@ class PostActivity : AppCompatActivity() {
         Categoryの表示。
          */
 
+        val names: List<String> = listOf(
+                getString(R.string.category_convenience_store),
+                getString(R.string.category_lunch),
+                getString(R.string.category_dinner),
+                getString(R.string.category_cafe),
+                getString(R.string.category_fast_food),
+                getString(R.string.category_shopping),
+                getString(R.string.category_ramen),
+                getString(R.string.category_games),
+                getString(R.string.category_music),
+                getString(R.string.category_savings),
+                getString(R.string.category_others),
+                getString(R.string.category_others)
+        )
+
+        val iconIds: List<Int> = listOf(
+                R.drawable.ic_baseline_storefront_24,
+                R.drawable.ic_baseline_lunch_dining_24,
+                R.drawable.ic_baseline_dinner_dining_24,
+                R.drawable.ic_baseline_coffee_24,
+                R.drawable.ic_baseline_fastfood_24,
+                R.drawable.ic_baseline_shopping_cart_24,
+                R.drawable.ic_baseline_ramen_dining_24,
+                R.drawable.ic_baseline_sports_esports_24,
+                R.drawable.ic_baseline_music_note_24,
+                R.drawable.ic_baseline_savings_24,
+                R.drawable.ic_baseline_sentiment_very_satisfied_24,
+                R.drawable.ic_baseline_sentiment_very_dissatisfied_24
+        )
+
         val categoryList = readAllCategory()
 
         if (readAllCategory().isEmpty()) {
-            createDummy()
+            createOriginalCategory(names, iconIds)
         }
 
         var categoryId = ""
@@ -94,7 +124,8 @@ class PostActivity : AppCompatActivity() {
         val adapter = CategoryAdapter(this, categoryList, object: CategoryAdapter.OnItemClickListener {
             override fun onItemClick(item: Category) {
 
-                Snackbar.make(postContainer, "${item.name}" + getText(R.string.post_snack_bar), Snackbar.LENGTH_SHORT).show()
+                //Snackbar.make(postContainer, "${item.name}" + getText(R.string.toast_category_selected), Snackbar.LENGTH_SHORT).show()
+                Toast.makeText(baseContext, "${item.name}" + getText(R.string.toast_category_selected), Toast.LENGTH_SHORT).show()
 
                 categoryId = item.id
                 iconId = item.iconId
@@ -107,16 +138,25 @@ class PostActivity : AppCompatActivity() {
         categoryRecyclerView.adapter = adapter
 
         submitButton.setOnClickListener {
-            create(
-                    satisfaction,
-                    amountEditText.text.toString().toInt(),
-                    titleEditText.text.toString(),
-                    commentEditText.text.toString(),
-                    datePickText.text.toString(),
-                    categoryId,
-                    iconId
-            )
-            finish()
+
+            if (datePickText.text.toString() == "") {
+                Snackbar.make(postContainer, getText(R.string.snack_bar_date_empty), Snackbar.LENGTH_SHORT).show()
+            } else if (amountEditText.text.toString() == "") {
+                Snackbar.make(postContainer, getText(R.string.snack_bar_amount_empty), Snackbar.LENGTH_SHORT).show()
+            } else if (titleEditText.text.toString() == "") {
+                Snackbar.make(postContainer, getText(R.string.snack_bar_title_empty), Snackbar.LENGTH_SHORT).show()
+            } else {
+                create(
+                        satisfaction,
+                        amountEditText.text.toString().toInt(),
+                        titleEditText.text.toString(),
+                        commentEditText.text.toString(),
+                        datePickText.text.toString(),
+                        categoryId,
+                        iconId
+                )
+                finish()
+            }
         }
     }
 
@@ -133,14 +173,14 @@ class PostActivity : AppCompatActivity() {
         }
     }
 
-    private fun createDummy() {
-        for (i in 0..9) {
-            createCategory("カテゴリー$i", R.drawable.ic_baseline_sentiment_very_satisfied_24)
+    private fun createOriginalCategory(names: List<String>, iconIds: List<Int>) {
+        for (i in 0 until names.size) {
+            createCategory(names[i], iconIds[i])
         }
     }
 
     private fun readAllCategory(): RealmResults<Category> {
-        return realm.where(Category::class.java).findAll().sort("createdAt", Sort.DESCENDING)
+        return realm.where(Category::class.java).findAll().sort("createdAt", Sort.ASCENDING)
     }
 
     private fun create(

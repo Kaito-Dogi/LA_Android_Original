@@ -34,7 +34,26 @@
         <string name="comment_edit_hint">Comment</string>
         <string name="category_caption">Category</string>
 
-        <string name="post_snack_bar">" "Selected</string>
+        <!--Snackbar-->
+        <string name="snack_bar_date_empty">Input Date!</string>
+        <string name="snack_bar_amount_empty">Input Amount!</string>
+        <string name="snack_bar_title_empty">Input Title!</string>
+
+        <!--Toast-->
+        <string name="toast_category_selected">" "Selected</string>
+
+        <!--Original Category-->
+        <string name="category_convenience_store">Convenience Store</string>
+        <string name="category_lunch">Lunch</string>
+        <string name="category_dinner">Dinner</string>
+        <string name="category_cafe">Cafe</string>
+        <string name="category_fast_food">Fast Food</string>
+        <string name="category_shopping">Shopping</string>
+        <string name="category_ramen">Ramen</string>
+        <string name="category_games">Games</string>
+        <string name="category_music">Music</string>
+        <string name="category_savings">Savings</string>
+        <string name="category_others">Others</string>
 
     <!--activity_settings-->
     <string name="activity_settings_title">Settings</string>
