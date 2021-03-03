@@ -37,7 +37,6 @@ class CalendarFragment : Fragment() {
         var adapter = RecordAdapter(context as Context, recordList, true)
 
         recordRecyclerViewInCalendar.setHasFixedSize(true)
-
         recordRecyclerViewInCalendar.layoutManager = LinearLayoutManager(context)
         recordRecyclerViewInCalendar.adapter = adapter
 
@@ -52,12 +51,19 @@ class CalendarFragment : Fragment() {
             val date = getDate(year, month, dayOfMonth)
 
             recordList = readAtTheDay(date)
+
             adapter = RecordAdapter(context as Context, recordList, true)
+
             recordRecyclerViewInCalendar.adapter = adapter
 
             averageText.text = calculateAverageSatisfaction(date).toString() + "％"
 
         }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     override fun onDestroy() {
@@ -106,6 +112,7 @@ class CalendarFragment : Fragment() {
 
         if (!records.isEmpty()) {
             averageSatisfaction /= records.size
+            averageSatisfaction = Math.round(averageSatisfaction*10.0)/10.0
         }
 
         return averageSatisfaction

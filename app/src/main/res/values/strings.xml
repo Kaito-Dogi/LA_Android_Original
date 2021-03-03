@@ -38,6 +38,8 @@
         <string name="snack_bar_date_empty">Input Date!</string>
         <string name="snack_bar_amount_empty">Input Amount!</string>
         <string name="snack_bar_title_empty">Input Title!</string>
+        <string name="snack_bar_satisfaction_empty">Select Satisfaction!</string>
+        <string name="snack_bar_category_empty">Select Category!</string>
 
         <!--Toast-->
         <string name="toast_category_selected">" "Selected</string>
@@ -56,12 +58,9 @@
         <string name="category_others">Others</string>
 
     <!--activity_settings-->
-    <string name="activity_settings_title">Settings</string>
+        <string name="activity_settings_title">Settings</string>
 
     <!--activity_how_to_use-->
-    <string name="activity_how_to_use_title">How to Use</string>
+        <string name="activity_how_to_use_title">How to Use</string>
 
-    <!--HomeFragment-->
-    <string name="period_caption">Period: </string>
-    <string name="total_savings_caption">Total: </string>
 </resources>

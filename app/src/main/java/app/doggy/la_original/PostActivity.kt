@@ -37,6 +37,7 @@ class PostActivity : AppCompatActivity() {
          */
 
         var satisfaction = 0
+        var selectedSatisfaction = false
 
         satisfiedSlider.addOnSliderTouchListener(object: Slider.OnSliderTouchListener {
             override fun onStartTrackingTouch(slider: Slider) {
@@ -46,12 +47,14 @@ class PostActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(slider: Slider) {
                 // Responds to when slider's touch event is being stopped
                 satisfaction = satisfiedSlider.value.toInt()
+                selectedSatisfaction = true
             }
         })
 
         satisfiedSlider.addOnChangeListener { slider, value, fromUser ->
             // Responds to when slider's value is changed
             satisfaction = satisfiedSlider.value.toInt()
+            selectedSatisfaction = true
         }
 
         /*
@@ -120,6 +123,7 @@ class PostActivity : AppCompatActivity() {
 
         var categoryId = ""
         var iconId = 0
+        var selectedCategory = false
 
         val adapter = CategoryAdapter(this, categoryList, object: CategoryAdapter.OnItemClickListener {
             override fun onItemClick(item: Category) {
@@ -129,6 +133,7 @@ class PostActivity : AppCompatActivity() {
 
                 categoryId = item.id
                 iconId = item.iconId
+                selectedCategory = true
 
             }
         },true)
@@ -145,6 +150,10 @@ class PostActivity : AppCompatActivity() {
                 Snackbar.make(postContainer, getText(R.string.snack_bar_amount_empty), Snackbar.LENGTH_SHORT).show()
             } else if (titleEditText.text.toString() == "") {
                 Snackbar.make(postContainer, getText(R.string.snack_bar_title_empty), Snackbar.LENGTH_SHORT).show()
+            } else if (!selectedSatisfaction) {
+                Snackbar.make(postContainer, getText(R.string.snack_bar_satisfaction_empty), Snackbar.LENGTH_SHORT).show()
+            } else if (!selectedCategory) {
+                Snackbar.make(postContainer, getText(R.string.snack_bar_category_empty), Snackbar.LENGTH_SHORT).show()
             } else {
                 create(
                         satisfaction,
