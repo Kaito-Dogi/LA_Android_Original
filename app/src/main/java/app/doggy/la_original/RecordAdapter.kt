@@ -17,30 +17,35 @@ class RecordAdapter(
     private val context: Context,
     private var recordList: OrderedRealmCollection<Record>?,
     private val autoUpdate: Boolean
-): RealmRecyclerViewAdapter<Record, RecordAdapter.TaskViewHolder>(recordList, autoUpdate) {
+): RealmRecyclerViewAdapter<Record, RecordAdapter.RecordViewHolder>(recordList, autoUpdate) {
 
     override fun getItemCount(): Int = recordList?.size ?: 0
 
-    override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecordViewHolder, position: Int) {
         val record: Record = recordList?.get(position) ?: return
 
         holder.titleText.text = record.title
         holder.satisfactionText.text = record.satisfaction.toString() + "％"
         holder.amountText.text = record.amount.toString() + "円"
-        holder.recordIcon.setImageResource(R.drawable.ic_baseline_sentiment_very_satisfied_24)
+
+        if (record.iconId == 0) {
+            holder.icon.setImageResource(R.drawable.ic_baseline_sentiment_very_satisfied_24)
+        } else {
+            holder.icon.setImageResource(record.iconId)
+        }
 
     }
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): TaskViewHolder {
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecordViewHolder {
         val v = LayoutInflater.from(context).inflate(R.layout.item_record, viewGroup, false)
-        return TaskViewHolder(v)
+        return RecordViewHolder(v)
     }
 
-    class TaskViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class RecordViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val titleText: TextView = view.titleText
         val satisfactionText: TextView = view.satisfactionText
         val amountText: TextView = view.amountText
-        val recordIcon: ImageView = view.recordIcon
+        val icon: ImageView = view.recordIcon
     }
 
 }

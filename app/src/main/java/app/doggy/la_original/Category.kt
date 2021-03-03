@@ -7,5 +7,6 @@ import java.util.*
 open class Category(
     @PrimaryKey open var id: String = UUID.randomUUID().toString(),
     open var name: String = "",
-    open var imageId: Int = 0
+    open var iconId: Int = 0,
+    open var createdAt: Date = Date(System.currentTimeMillis())
 ): RealmObject()

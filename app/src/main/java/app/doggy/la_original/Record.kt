@@ -12,5 +12,6 @@ open class Record(
     open var comment: String = "",
     open var date: String = "",
     open var categoryId: String = "",
+    open var iconId: Int = 0,
     open var createdAt: Date = Date(System.currentTimeMillis())
 ): RealmObject()

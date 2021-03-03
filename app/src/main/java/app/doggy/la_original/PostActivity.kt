@@ -1,14 +1,22 @@
 package app.doggy.la_original
 
 import android.app.DatePickerDialog
+import android.content.res.ColorStateList
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.slider.Slider
+import com.google.android.material.snackbar.Snackbar
 import io.realm.Realm
+import io.realm.RealmObject
+import io.realm.RealmResults
+import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_post.*
+import kotlinx.android.synthetic.main.item_category.*
 import java.util.*
 
 class PostActivity : AppCompatActivity() {
@@ -30,7 +38,7 @@ class PostActivity : AppCompatActivity() {
 
         var satisfaction = 0
 
-        satisfiedSlider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+        satisfiedSlider.addOnSliderTouchListener(object: Slider.OnSliderTouchListener {
             override fun onStartTrackingTouch(slider: Slider) {
                 // Responds to when slider's touch event is being started
             }
@@ -70,13 +78,43 @@ class PostActivity : AppCompatActivity() {
 
         }
 
+        /*
+        Categoryの表示。
+         */
+
+        val categoryList = readAllCategory()
+
+        if (readAllCategory().isEmpty()) {
+            createDummy()
+        }
+
+        var categoryId = ""
+        var iconId = 0
+
+        val adapter = CategoryAdapter(this, categoryList, object: CategoryAdapter.OnItemClickListener {
+            override fun onItemClick(item: Category) {
+
+                Snackbar.make(postContainer, "${item.name}" + getText(R.string.post_snack_bar), Snackbar.LENGTH_SHORT).show()
+
+                categoryId = item.id
+                iconId = item.iconId
+
+            }
+        },true)
+
+        categoryRecyclerView.setHasFixedSize(true)
+        categoryRecyclerView.layoutManager = GridLayoutManager(baseContext, 4)
+        categoryRecyclerView.adapter = adapter
+
         submitButton.setOnClickListener {
             create(
-                satisfaction,
-                amountEditText.text.toString().toInt(),
-                titleEditText.text.toString(),
-                commentEditText.text.toString(),
-                datePickText.text.toString()
+                    satisfaction,
+                    amountEditText.text.toString().toInt(),
+                    titleEditText.text.toString(),
+                    commentEditText.text.toString(),
+                    datePickText.text.toString(),
+                    categoryId,
+                    iconId
             )
             finish()
         }
@@ -87,22 +125,42 @@ class PostActivity : AppCompatActivity() {
         realm.close()
     }
 
+    private fun createCategory(name: String, iconId: Int) {
+        realm.executeTransaction {
+            val category = it.createObject(Category::class.java, UUID.randomUUID().toString())
+            category.name = name
+            category.iconId = iconId
+        }
+    }
+
+    private fun createDummy() {
+        for (i in 0..9) {
+            createCategory("カテゴリー$i", R.drawable.ic_baseline_sentiment_very_satisfied_24)
+        }
+    }
+
+    private fun readAllCategory(): RealmResults<Category> {
+        return realm.where(Category::class.java).findAll().sort("createdAt", Sort.DESCENDING)
+    }
+
     private fun create(
         satisfaction: Int,
         amount: Int,
         title: String,
         comment: String,
-        date: String
+        date: String,
+        categoryId: String,
+        iconId: Int
     ) {
         realm.executeTransaction {
             val record = it.createObject(Record::class.java, UUID.randomUUID().toString())
-            Log.d("comment", comment)
             record.satisfaction = satisfaction
             record.amount = amount
             record.title = title
             record.comment = comment
             record.date = date
-            //record.categoryId = categolyId
+            record.categoryId = categoryId
+            record.iconId = iconId
         }
     }
 
