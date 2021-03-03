@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/main_fragment"
+        android:id="@+id/mainFragmentContainer"
         android:name="app.doggy.la_original.MainFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"

@@ -6,8 +6,11 @@ import java.util.*
 
 open class Record(
     @PrimaryKey open var id: String = UUID.randomUUID().toString(),
-    open var actualValue: Int = 0,
-    open var perceivedValue: Int = 0,
+    open var satisfaction: Int = 0,
+    open var amount: Int = 0,
+    open var title: String = "",
     open var comment: String = "",
+    open var date: String = "",
+    open var categoryId: String = "",
     open var createdAt: Date = Date(System.currentTimeMillis())
 ): RealmObject()

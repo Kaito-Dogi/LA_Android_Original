@@ -12,6 +12,7 @@ import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.fragment_calendar.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 class CalendarFragment : Fragment() {
@@ -31,21 +32,31 @@ class CalendarFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recordList = readAll()
+        var recordList = readAtTheDay(SimpleDateFormat("yyyy/MM/dd").format(Date()).toString())
 
-        if (recordList.isEmpty()) {
-            createDummy()
-        }
-
-        val adapter = RecordAdapter(context as Context, recordList, true)
+        var adapter = RecordAdapter(context as Context, recordList, true)
 
         recordRecyclerViewInCalendar.setHasFixedSize(true)
+
         recordRecyclerViewInCalendar.layoutManager = LinearLayoutManager(context)
         recordRecyclerViewInCalendar.adapter = adapter
 
-        //カレンダーの日付のクリックイベント設定
+        averageText.text = calculateAverageSatisfaction(SimpleDateFormat("yyyy/MM/dd").format(Date()).toString()).toString() + "％"
+
+        /*
+        Calendarの処理。
+         */
+
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
-            Toast.makeText(context, "" + year + "-" + (month+1) + "-" + dayOfMonth, Toast.LENGTH_LONG).show()
+
+            val date = getDate(year, month, dayOfMonth)
+
+            recordList = readAtTheDay(date)
+            adapter = RecordAdapter(context as Context, recordList, true)
+            recordRecyclerViewInCalendar.adapter = adapter
+
+            averageText.text = calculateAverageSatisfaction(date).toString() + "％"
+
         }
     }
 
@@ -54,20 +65,49 @@ class CalendarFragment : Fragment() {
         realm.close()
     }
 
-    private fun createDummy() {
-        for (i in 0..9) {
-            create("支出$i")
+    private fun getDate(year: Int, month: Int, dayOfMonth: Int): String {
+
+        val date: String
+
+        if (month in 0..8 && dayOfMonth in 0..8) {
+            date = "" + year + "/0" + "${month + 1}" + "/0" + dayOfMonth
+        } else if (month in 0..8) {
+            date = "" + year + "/0" + "${month + 1}" + "/" + dayOfMonth
+        } else if (dayOfMonth in 0..8) {
+            date = "" + year + "/" + "${month + 1}" + "/0" + dayOfMonth
+        } else {
+            date = "" + year + "/" + "${month + 1}" + "/" + dayOfMonth
         }
+
+        return date
+
     }
 
-    private fun create(comment: String) {
-        realm.executeTransaction {
-            val item = it.createObject(Record::class.java, UUID.randomUUID().toString())
-            item.comment = comment
-        }
+    private fun readAtTheDay(date: String): RealmResults<Record> {
+        return realm
+            .where(Record::class.java)
+            .equalTo("date", date)
+            .findAll()
+            .sort("createdAt", Sort.DESCENDING)
     }
 
-    private fun readAll(): RealmResults<Record> {
-        return realm.where(Record::class.java).findAll().sort("createdAt", Sort.ASCENDING)
+    private fun calculateAverageSatisfaction(date: String): Double {
+
+        val records = realm
+                .where(Record::class.java)
+                .equalTo("date", date)
+                .findAll()
+
+        var averageSatisfaction = 0.0
+
+        for (i in 0 until records.size) {
+            averageSatisfaction += records[i]?.satisfaction.toString().toDouble()
+        }
+
+        if (!records.isEmpty()) {
+            averageSatisfaction /= records.size
+        }
+
+        return averageSatisfaction
     }
 }

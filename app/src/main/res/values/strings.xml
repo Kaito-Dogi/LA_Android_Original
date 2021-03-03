@@ -4,24 +4,41 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!--MainActivity-->
-    <string name="fab_description">submit</string>
+        <string name="fab_description">submit</string>
+        <!--overflow_menu-->
+        <string name="how_to_use">How to Use</string>
+        <string name="settings">Settings</string>
 
-    <!--Tabs-->
-    <string name="text_label_chart">Chart</string>
-    <string name="text_label_calendar">Calendar</string>
+    <!--MainFragment-->
+        <!--tab_layout-->
+        <string name="text_label_chart">Chart</string>
+        <string name="text_label_calendar">Calendar</string>
+
+    <!--ChartFragment-->
+        <!--chipGroup-->
+        <string name="text_choice_ever">Ever</string>
+        <string name="text_choice_weekly">Weekly</string>
+        <string name="text_choice_monthly">Monthly</string>
+        <string name="text_choice_yearly">Yearly</string>
+
+    <!--CalendarFragment-->
+        <string name="average_caption">Average satisfaction：</string>
 
     <!--PostActivity-->
-    <string name="actual_value_edit_hint">Actual Value</string>
-    <string name="perceived_value_edit_hint">Perceived Value</string>
-    <string name="comment_edit_hint">Comment</string>
-    <string name="date_edit_hint">Date</string>
-    <string name="presets_caption">Presets</string>
-    <string name="submit_button_text">Submit</string>
-    
-    <string name="text_choice_all">All</string>
-    <string name="text_choice_weekly">Weekly</string>
-    <string name="text_choice_monthly">Monthly</string>
-    <string name="text_choice_yearly">Yearly</string>
+        <string name="activity_post_title">Record</string>
+        <string name="satisfaction_caption">Satisfaction</string>
+        <string name="amount_edit_hint">Amount</string>
+        <string name="title_edit_hint">Title</string>
+        <string name="comment_edit_hint">Comment</string>
+        <string name="date_edit_hint">Date</string>
+        <string name="category_caption">Category</string>
+        <string name="submit_button_text">Submit</string>
+
+    <!--activity_settings-->
+    <string name="activity_settings_title">Settings</string>
+
+    <!--activity_how_to_use-->
+    <string name="activity_how_to_use_title">How to Use</string>
 
     <!--HomeFragment-->
     <string name="period_caption">Period: </string>

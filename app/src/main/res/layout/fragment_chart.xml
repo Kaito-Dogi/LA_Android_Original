@@ -13,7 +13,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        app:checkedChip="@id/allChip"
+        app:checkedChip="@id/EverChip"
         app:chipSpacingHorizontal="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,11 +22,11 @@
         app:singleSelection="true">
 
         <com.google.android.material.chip.Chip
-            android:id="@+id/allChip"
+            android:id="@+id/EverChip"
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/text_choice_all"
+            android:text="@string/text_choice_ever"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textSize="12sp"
             app:chipEndPadding="10dp"
@@ -123,6 +123,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
+        android:fontFamily="sans-serif-medium"
         android:text="カテゴリ別"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"

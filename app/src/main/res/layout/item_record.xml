@@ -11,7 +11,7 @@
     card_view:cardElevation="2dp">
 
     <LinearLayout
-        android:id="@+id/container"
+        android:id="@+id/recordContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?android:attr/selectableItemBackground"
@@ -21,39 +21,62 @@
         android:orientation="horizontal"
         android:padding="4dp">
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/recordIconContainer"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
+        app:cardBackgroundColor="@color/purple_500"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="0dp">
+
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="8dp"
-            android:background="@color/purple_500"
+            android:id="@+id/recordIcon"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
             android:padding="2dp"
-            android:scaleType="fitCenter"
             app:tint="@color/white"
-            card_view:srcCompat="@drawable/ic_baseline_home_24" />
+            card_view:srcCompat="@drawable/ic_baseline_sentiment_very_satisfied_24"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center" />
+
+        </androidx.cardview.widget.CardView>
+
+<!--        <ImageView-->
+<!--            android:id="@+id/imageView"-->
+<!--            android:layout_width="28dp"-->
+<!--            android:layout_height="28dp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginStart="4dp"-->
+<!--            android:layout_marginEnd="8dp"-->
+<!--            android:background="@color/purple_500"-->
+<!--            android:padding="2dp"-->
+<!--            android:scaleType="fitCenter"-->
+<!--            app:tint="@color/white"-->
+<!--            card_view:srcCompat="@drawable/ic_baseline_home_24" />-->
 
         <TextView
-            android:id="@+id/commentTextView"
+            android:id="@+id/titleText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginEnd="8dp"
-            android:layout_weight="0.85"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="カフェ"
             android:textSize="16sp" />
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="0.15"
+            android:layout_marginEnd="8dp"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/satisfactionText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -61,7 +84,7 @@
                 android:text="80%" />
 
             <TextView
-                android:id="@+id/savingsTextView"
+                android:id="@+id/amountText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

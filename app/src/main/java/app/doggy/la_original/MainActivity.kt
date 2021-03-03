@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
@@ -18,11 +19,29 @@ class MainActivity : AppCompatActivity() {
             val postIntent = Intent(baseContext, PostActivity::class.java)
             startActivity(postIntent)
         }
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.overflow_menu, menu)
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.settings -> {
+                val settingsIntent = Intent(baseContext, SettingsActivity::class.java)
+                startActivity(settingsIntent)
+                true
+            }
+            R.id.howToUse -> {
+                val howToUseIntent = Intent(baseContext, HowToUseActivity::class.java)
+                startActivity(howToUseIntent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

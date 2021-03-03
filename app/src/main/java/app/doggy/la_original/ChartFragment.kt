@@ -20,6 +20,10 @@ import kotlinx.android.synthetic.main.fragment_chart.*
 
 class ChartFragment : Fragment() {
 
+    private val realm: Realm by lazy {
+        Realm.getDefaultInstance()
+    }
+
     private lateinit var pieChart: PieChart
 
     override fun onCreateView(
@@ -66,6 +70,11 @@ class ChartFragment : Fragment() {
             }
         }
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
     }
 
     private fun drawChart(pieChart: PieChart, dimensions: List<String>, values: List<Float>) {
