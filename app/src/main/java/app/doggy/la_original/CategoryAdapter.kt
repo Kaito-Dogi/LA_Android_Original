@@ -1,12 +1,15 @@
 package app.doggy.la_original
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import io.realm.OrderedRealmCollection
 import io.realm.RealmRecyclerViewAdapter
@@ -26,16 +29,12 @@ class CategoryAdapter(
         val category: Category = categoryList?.get(position) ?: return
 
         holder.container.setOnClickListener{
-            listener.onItemClick(category)
+            listener.onItemClick(category, holder.card)
         }
 
         holder.nameText.text = category.name
-
-        if (category.iconId == 0) {
-            holder.icon.setImageResource(R.drawable.ic_baseline_sentiment_very_satisfied_24)
-        } else {
-            holder.icon.setImageResource(category.iconId)
-        }
+        holder.icon.setImageResource(category.iconId)
+        holder.card.cardElevation = 6f
 
     }
 
@@ -48,10 +47,11 @@ class CategoryAdapter(
         val container : LinearLayout = view.categoryContainer
         val nameText: TextView = view.categoryNameText
         val icon: ImageView = view.categoryIcon
+        val card: CardView = view.categoryCard
     }
 
     interface OnItemClickListener {
-        fun onItemClick(item: Category)
+        fun onItemClick(item: Category, card: CardView)
     }
 
 }

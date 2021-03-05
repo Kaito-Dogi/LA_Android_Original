@@ -27,12 +27,7 @@ class RecordAdapter(
         holder.titleText.text = record.title
         holder.satisfactionText.text = record.satisfaction.toString() + "％"
         holder.amountText.text = record.amount.toString() + "円"
-
-        if (record.iconId == 0) {
-            holder.icon.setImageResource(R.drawable.ic_baseline_sentiment_very_satisfied_24)
-        } else {
-            holder.icon.setImageResource(record.iconId)
-        }
+        holder.icon.setImageResource(record.iconId)
 
     }
 

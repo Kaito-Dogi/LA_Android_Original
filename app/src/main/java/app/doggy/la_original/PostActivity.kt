@@ -1,22 +1,17 @@
 package app.doggy.la_original
 
 import android.app.DatePickerDialog
-import android.content.res.ColorStateList
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
-import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import io.realm.Realm
-import io.realm.RealmObject
 import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_post.*
-import kotlinx.android.synthetic.main.item_category.*
 import java.util.*
 
 class PostActivity : AppCompatActivity() {
@@ -24,6 +19,8 @@ class PostActivity : AppCompatActivity() {
     private val realm: Realm by lazy {
         Realm.getDefaultInstance()
     }
+
+    //lateinit var preContainer: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,18 +120,21 @@ class PostActivity : AppCompatActivity() {
 
         var categoryId = ""
         var iconId = 0
-        var selectedCategory = false
+        var preItem: CardView = findViewById(R.id.dummyCard)
 
         val adapter = CategoryAdapter(this, categoryList, object: CategoryAdapter.OnItemClickListener {
-            override fun onItemClick(item: Category) {
-
-                //Snackbar.make(postContainer, "${item.name}" + getText(R.string.toast_category_selected), Snackbar.LENGTH_SHORT).show()
-                Toast.makeText(baseContext, "${item.name}" + getText(R.string.toast_category_selected), Toast.LENGTH_SHORT).show()
-
+            override fun onItemClick(item: Category, card: CardView) {
+                //Toast.makeText(baseContext, item.name + getText(R.string.toast_category_selected), Toast.LENGTH_SHORT).show()
                 categoryId = item.id
                 iconId = item.iconId
-                selectedCategory = true
 
+                preItem.setBackgroundResource(R.drawable.shape_rounded_corners_white)
+                preItem.cardElevation = 6f
+
+                card.setBackgroundResource(R.drawable.shape_rounded_corners_gray)
+                card.cardElevation = 0f
+
+                preItem = card
             }
         },true)
 
@@ -152,8 +152,6 @@ class PostActivity : AppCompatActivity() {
                 Snackbar.make(postContainer, getText(R.string.snack_bar_title_empty), Snackbar.LENGTH_SHORT).show()
             } else if (!selectedSatisfaction) {
                 Snackbar.make(postContainer, getText(R.string.snack_bar_satisfaction_empty), Snackbar.LENGTH_SHORT).show()
-            } else if (!selectedCategory) {
-                Snackbar.make(postContainer, getText(R.string.snack_bar_category_empty), Snackbar.LENGTH_SHORT).show()
             } else {
                 create(
                         satisfaction,
