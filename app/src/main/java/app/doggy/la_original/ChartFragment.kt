@@ -1,11 +1,13 @@
 package app.doggy.la_original
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -16,6 +18,7 @@ import io.realm.Realm
 import io.realm.Sort
 import kotlinx.android.synthetic.main.fragment_chart.*
 import kotlin.math.round
+import kotlin.math.roundToInt
 
 class ChartFragment : Fragment() {
 
@@ -55,6 +58,28 @@ class ChartFragment : Fragment() {
         pieChart = view.findViewById(R.id.pie_chart)
 
         changeChart(switch)
+
+        val legendList: MutableList<Legend> = mutableListOf()
+        for (i in 0..4) {
+            legendList.add(Legend(
+                "凡例$i",
+                i * 10,
+                R.drawable.ic_baseline_storefront_24
+            ))
+        }
+
+        //adapterをインスタンス化する。
+        val adapter = LegendAdapter(context as Context)
+
+        //RecyclerViewのレイアウトを決める。
+        legendRecyclerView.layoutManager = LinearLayoutManager(context as Context) //縦横表示
+        //recyclerView.layoutManager = GridLayoutManager(baseContext,2) //グリッド表示
+
+        //RecyclerViewにadapterを渡す。
+        legendRecyclerView.adapter = adapter
+
+        //RecyclerViewにデータを表示する。
+        adapter.addAll(legendList)
 
         chartSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             when(switch) {
@@ -198,7 +223,7 @@ class ChartFragment : Fragment() {
         pieDataSet.valueTextColor = Color.WHITE
         pieDataSet.valueFormatter = object: ValueFormatter() {
             override fun getFormattedValue(value: Float): String{
-                return "%.1f%%".format(value)
+                return "%.0f%%".format(value)
             }
         }
 
@@ -216,7 +241,7 @@ class ChartFragment : Fragment() {
         //グラフ内に表示する、各項目の名前のサイズ。
         pieChart.setEntryLabelTextSize(10f)
         //グラフの中央に文字を表示。
-        pieChart.centerText = amountSum.toString()
+        pieChart.centerText = "${incomeSum.roundToInt()}円"
         pieChart.setCenterTextSize(20f)
         //グラフに触れなくする。
         pieChart.setTouchEnabled(false)
