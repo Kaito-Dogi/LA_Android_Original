@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.realm.Realm
 import io.realm.RealmResults
@@ -26,52 +25,59 @@ class CalendarFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_calendar, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var recordList = readAtTheDay(SimpleDateFormat("yyyy/MM/dd").format(Date()).toString())
-
-        var adapter = RecordAdapter(context as Context, recordList, true)
-
+        //RecyclerViewの設定。
         recordRecyclerViewInCalendar.setHasFixedSize(true)
         recordRecyclerViewInCalendar.layoutManager = LinearLayoutManager(context)
+
+        //今日のRecordリストを表示。
+        var recordList = readAtTheDay(SimpleDateFormat("yyyy/MM/dd").format(Date()).toString())
+        var adapter = RecordAdapter(context as Context, recordList, object: RecordAdapter.OnItemClickListener {
+            override fun onItemClick(item: Record) {
+
+            }
+        },true)
         recordRecyclerViewInCalendar.adapter = adapter
 
+        //今日の平均満足度を表示。
         averageText.text = calculateAverageSatisfaction(SimpleDateFormat("yyyy/MM/dd").format(Date()).toString()).toString() + "％"
-
-        /*
-        Calendarの処理。
-         */
 
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
 
+            //日付を取得。
             val date = getDate(year, month, dayOfMonth)
 
+            //その日のれcおρdリストを表示。
             recordList = readAtTheDay(date)
+            adapter = RecordAdapter(context as Context, recordList, object: RecordAdapter.OnItemClickListener {
+                override fun onItemClick(item: Record) {
 
-            adapter = RecordAdapter(context as Context, recordList, true)
-
+                }
+            },true)
             recordRecyclerViewInCalendar.adapter = adapter
 
+            //その日の平均満足度を表示。
             averageText.text = calculateAverageSatisfaction(date).toString() + "％"
 
         }
 
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
+//    override fun onResume() {
+//        super.onResume()
+//    }
 
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
     }
 
+    //日付の文字列で取得する処理。
     private fun getDate(year: Int, month: Int, dayOfMonth: Int): String {
 
         val date: String
@@ -90,6 +96,7 @@ class CalendarFragment : Fragment() {
 
     }
 
+    //指定した日付のRecordを取得する処理。
     private fun readAtTheDay(date: String): RealmResults<Record> {
         return realm
             .where(Record::class.java)
@@ -98,26 +105,28 @@ class CalendarFragment : Fragment() {
             .sort("createdAt", Sort.DESCENDING)
     }
 
+    //指定した日付の平均値を求める処理。
     private fun calculateAverageSatisfaction(date: String): Int {
 
+        //その日のRecordを取得。
         val records = realm
                 .where(Record::class.java)
                 .equalTo("date", date)
                 .findAll()
 
-        var averageSatisfaction = 0.0
-        //var averageSatisfaction = 0
-
+        //満足度の合計を求める。
+        var satisfactionSum = 0
         for (i in 0 until records.size) {
-            averageSatisfaction += records[i]?.satisfaction.toString().toDouble()
-            //averageSatisfaction += records[i]?.satisfaction.toString().toInt()
+            satisfactionSum += records[i]?.satisfaction as Int
         }
 
+        //平均満足度を求める。
+        var averageSatisfaction = 0f
         if (!records.isEmpty()) {
-            averageSatisfaction /= records.size
-            //averageSatisfaction = Math.round(averageSatisfaction*10.0)/10.0
+            averageSatisfaction =  satisfactionSum.toString().toFloat() / records.size
         }
 
         return averageSatisfaction.roundToInt()
+
     }
 }

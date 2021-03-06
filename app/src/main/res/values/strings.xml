@@ -21,6 +21,7 @@
 
     <!--CalendarFragment-->
         <string name="average_caption">Average satisfaction：</string>
+        <string name="item_record_amount">¥%1$s</string>
 
     <!--PostActivity-->
         <string name="activity_post_title">Record</string>

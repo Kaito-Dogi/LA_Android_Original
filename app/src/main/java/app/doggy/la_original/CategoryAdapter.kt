@@ -1,8 +1,6 @@
 package app.doggy.la_original
 
 import android.content.Context
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.realm.OrderedRealmCollection
 import io.realm.RealmRecyclerViewAdapter
 import kotlinx.android.synthetic.main.item_category.view.*
-import kotlinx.android.synthetic.main.item_record.view.*
 
 class CategoryAdapter(
         private val context: Context,
@@ -44,7 +41,7 @@ class CategoryAdapter(
     }
 
     class CategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val container : LinearLayout = view.categoryContainer
+        val container: LinearLayout = view.categoryContainer
         val nameText: TextView = view.categoryNameText
         val icon: ImageView = view.categoryIcon
         val card: CardView = view.categoryCard

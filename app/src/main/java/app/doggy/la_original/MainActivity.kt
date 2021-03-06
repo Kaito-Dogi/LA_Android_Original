@@ -20,7 +20,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(postIntent)
         }
 
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -44,4 +43,5 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
 }

@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.slider.Slider
@@ -139,7 +140,8 @@ class PostActivity : AppCompatActivity() {
 
         val adapter = CategoryAdapter(this, categoryList, object: CategoryAdapter.OnItemClickListener {
             override fun onItemClick(item: Category, card: CardView) {
-                //Toast.makeText(baseContext, item.name + getText(R.string.toast_category_selected), Toast.LENGTH_SHORT).show()
+                Toast.makeText(baseContext, item.name + getText(R.string.toast_category_selected), Toast.LENGTH_SHORT).show()
+
                 categoryId = item.id
                 iconId = item.iconId
 
@@ -235,13 +237,6 @@ class PostActivity : AppCompatActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     private fun getDate(year: Int, month: Int, dayOfMonth: Int): String {
 
         val date: String
@@ -259,4 +254,12 @@ class PostActivity : AppCompatActivity() {
         return date
 
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 }
