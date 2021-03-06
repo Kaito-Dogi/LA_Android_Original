@@ -14,6 +14,7 @@ import io.realm.Sort
 import kotlinx.android.synthetic.main.fragment_calendar.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 class CalendarFragment : Fragment() {
 
@@ -97,7 +98,7 @@ class CalendarFragment : Fragment() {
             .sort("createdAt", Sort.DESCENDING)
     }
 
-    private fun calculateAverageSatisfaction(date: String): Double {
+    private fun calculateAverageSatisfaction(date: String): Int {
 
         val records = realm
                 .where(Record::class.java)
@@ -105,16 +106,18 @@ class CalendarFragment : Fragment() {
                 .findAll()
 
         var averageSatisfaction = 0.0
+        //var averageSatisfaction = 0
 
         for (i in 0 until records.size) {
             averageSatisfaction += records[i]?.satisfaction.toString().toDouble()
+            //averageSatisfaction += records[i]?.satisfaction.toString().toInt()
         }
 
         if (!records.isEmpty()) {
             averageSatisfaction /= records.size
-            averageSatisfaction = Math.round(averageSatisfaction*10.0)/10.0
+            //averageSatisfaction = Math.round(averageSatisfaction*10.0)/10.0
         }
 
-        return averageSatisfaction
+        return averageSatisfaction.roundToInt()
     }
 }

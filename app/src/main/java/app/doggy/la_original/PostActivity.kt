@@ -13,14 +13,13 @@ import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_post.*
 import java.util.*
+import kotlin.math.roundToInt
 
 class PostActivity : AppCompatActivity() {
 
     private val realm: Realm by lazy {
         Realm.getDefaultInstance()
     }
-
-    //lateinit var preContainer: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +51,22 @@ class PostActivity : AppCompatActivity() {
             // Responds to when slider's value is changed
             satisfaction = satisfiedSlider.value.toInt()
             selectedSatisfaction = true
+        }
+
+        satisfiedIcon.setOnClickListener {
+            satisfiedSlider.value = 100f
+            satisfaction = satisfiedSlider.value.toInt()
+            selectedSatisfaction = true
+        }
+
+        unsatisfiedIcon.setOnClickListener {
+            satisfiedSlider.value = -100f
+            satisfaction = satisfiedSlider.value.toInt()
+            selectedSatisfaction = true
+        }
+
+        satisfiedSlider.setLabelFormatter { value: Float ->
+            return@setLabelFormatter "${value.roundToInt()}%"
         }
 
         /*
@@ -120,7 +135,7 @@ class PostActivity : AppCompatActivity() {
 
         var categoryId = ""
         var iconId = 0
-        var preItem: CardView = findViewById(R.id.dummyCard)
+        var preCard: CardView = findViewById(R.id.dummyCard)
 
         val adapter = CategoryAdapter(this, categoryList, object: CategoryAdapter.OnItemClickListener {
             override fun onItemClick(item: Category, card: CardView) {
@@ -128,13 +143,13 @@ class PostActivity : AppCompatActivity() {
                 categoryId = item.id
                 iconId = item.iconId
 
-                preItem.setBackgroundResource(R.drawable.shape_rounded_corners_white)
-                preItem.cardElevation = 6f
+                preCard.setBackgroundResource(R.drawable.shape_rounded_corners_white)
+                preCard.cardElevation = 6f
 
                 card.setBackgroundResource(R.drawable.shape_rounded_corners_gray)
                 card.cardElevation = 0f
 
-                preItem = card
+                preCard = card
             }
         },true)
 
@@ -153,15 +168,16 @@ class PostActivity : AppCompatActivity() {
             } else if (!selectedSatisfaction) {
                 Snackbar.make(postContainer, getText(R.string.snack_bar_satisfaction_empty), Snackbar.LENGTH_SHORT).show()
             } else {
-                create(
-                        satisfaction,
-                        amountEditText.text.toString().toInt(),
-                        titleEditText.text.toString(),
-                        commentEditText.text.toString(),
-                        datePickText.text.toString(),
-                        categoryId,
-                        iconId
-                )
+
+                val amount = amountEditText.text.toString().toInt()
+                val title = titleEditText.text.toString()
+                val comment = commentEditText.text.toString()
+                val date = datePickText.text.toString()
+
+                create(satisfaction, amount, title, comment, date, categoryId, iconId)
+
+                categoryCount(categoryId, amount)
+
                 finish()
             }
         }
@@ -208,6 +224,14 @@ class PostActivity : AppCompatActivity() {
             record.date = date
             record.categoryId = categoryId
             record.iconId = iconId
+        }
+    }
+
+    private fun categoryCount(categoryId: String, amount: Int) {
+        realm.executeTransaction {
+            val category = realm.where(Category::class.java).equalTo("id", categoryId).findFirst()
+                    ?: return@executeTransaction
+            category.amountSum += amount
         }
     }
 

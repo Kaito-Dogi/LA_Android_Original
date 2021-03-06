@@ -127,10 +127,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:stepSize="1"
             android:value="0"
             android:valueFrom="-100"
-            android:valueTo="100" />
+            android:valueTo="100"/>
+            <!--android:stepSize="1"-->
 
         <ImageView
             android:id="@+id/satisfiedIcon"
