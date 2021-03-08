@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/postContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/shape_rounded_corners_stroke"
         android:gravity="center_vertical"
@@ -101,11 +102,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:paddingStart="16dp"
         android:text="@string/satisfaction_caption"
-        android:textSize="12sp" />
+        android:textSize="14sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -114,13 +115,25 @@
         android:layout_marginEnd="16dp"
         android:orientation="horizontal">
 
-        <ImageView
+        <androidx.cardview.widget.CardView
             android:id="@+id/unsatisfiedIcon"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:srcCompat="@drawable/ic_baseline_sentiment_very_dissatisfied_24"
-            app:tint="@color/purple_500" />
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            card_view:cardElevation="2dp"
+            card_view:cardCornerRadius="16dp">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="2dp"
+                app:srcCompat="@drawable/ic_baseline_sentiment_very_dissatisfied_24"
+                app:tint="@color/purple_500" />
+
+        </androidx.cardview.widget.CardView>
 
         <com.google.android.material.slider.Slider
             android:id="@+id/satisfiedSlider"
@@ -132,33 +145,73 @@
             android:valueTo="100"/>
             <!--android:stepSize="1"-->
 
-        <ImageView
+        <androidx.cardview.widget.CardView
             android:id="@+id/satisfiedIcon"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:srcCompat="@drawable/ic_baseline_sentiment_very_satisfied_24"
-            app:tint="@color/purple_500" />
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            card_view:cardElevation="2dp"
+            card_view:cardCornerRadius="16dp">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="2dp"
+                app:srcCompat="@drawable/ic_baseline_sentiment_very_satisfied_24"
+                app:tint="@color/purple_500" />
+
+        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/categoryCaption"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
-        android:paddingStart="16dp"
-        android:text="@string/category_caption"
-        android:textSize="12sp" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/categoryCaption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:paddingStart="16dp"
+            android:text="@string/category_caption"
+            android:textSize="14sp" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/editCategoryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            card_view:cardCornerRadius="16dp"
+            card_view:cardElevation="2dp">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="4dp"
+                app:srcCompat="@drawable/ic_baseline_edit_24"
+                app:tint="@color/purple_500" />
+
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/categoryRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
         android:layout_weight="1">
 
     </androidx.recyclerview.widget.RecyclerView>
@@ -167,7 +220,10 @@
         android:id="@+id/submitButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
         android:padding="12dp"
         android:text="@string/submit_button_text"
         app:cornerRadius="32dp" />

@@ -13,14 +13,12 @@ class LegendAdapter(private val context: Context):
     RecyclerView.Adapter<LegendAdapter.ViewHolder>() {
 
     val items: MutableList<Legend> = mutableListOf()
-
-    //importする。
+    
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_legend, parent, false)
         return ViewHolder(view)
     }
 
-    //importする。
     //itemsのposition番目の要素をViewHolderに表示する。
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
@@ -33,7 +31,6 @@ class LegendAdapter(private val context: Context):
         }
     }
 
-    //importする。
     override fun getItemCount(): Int {
         return items.size
     }

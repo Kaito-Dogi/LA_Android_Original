@@ -102,30 +102,14 @@ class PostActivity : AppCompatActivity() {
                 getString(R.string.category_convenience_store),
                 getString(R.string.category_lunch),
                 getString(R.string.category_dinner),
-                getString(R.string.category_cafe),
-                getString(R.string.category_fast_food),
-                getString(R.string.category_shopping),
-                getString(R.string.category_ramen),
-                getString(R.string.category_games),
-                getString(R.string.category_music),
-                getString(R.string.category_savings),
-                getString(R.string.category_others),
-                getString(R.string.category_others)
+                getString(R.string.category_cafe)
         )
 
         val iconIds: List<Int> = listOf(
                 R.drawable.ic_baseline_storefront_24,
                 R.drawable.ic_baseline_lunch_dining_24,
                 R.drawable.ic_baseline_dinner_dining_24,
-                R.drawable.ic_baseline_coffee_24,
-                R.drawable.ic_baseline_fastfood_24,
-                R.drawable.ic_baseline_shopping_cart_24,
-                R.drawable.ic_baseline_ramen_dining_24,
-                R.drawable.ic_baseline_sports_esports_24,
-                R.drawable.ic_baseline_music_note_24,
-                R.drawable.ic_baseline_savings_24,
-                R.drawable.ic_baseline_sentiment_very_satisfied_24,
-                R.drawable.ic_baseline_sentiment_very_dissatisfied_24
+                R.drawable.ic_baseline_coffee_24
         )
 
         val categoryList = readAllCategory()
