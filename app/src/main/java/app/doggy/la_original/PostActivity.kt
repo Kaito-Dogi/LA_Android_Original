@@ -4,6 +4,8 @@ import android.app.DatePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -29,13 +31,22 @@ class PostActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setTitle(R.string.activity_post_title)
 
-        /*
-        Sliderの処理。
-         */
-
         var satisfaction = 0
-        var selectedSatisfaction = false
+        var selectedSatisfaction = true
 
+        val icons: List<CardView> = listOf(
+            veryUnsatisfiedIcon,
+            unsatisfiedIcon,
+            neitherIcon,
+            satisfiedIcon,
+            verySatisfiedIcon
+        )
+
+        for (i in 0 until icons.size) {
+            icons[i].setOnClickListener(IconClickListener(i, icons))
+        }
+
+//        //Sliderの処理。
 //        satisfiedSlider.addOnSliderTouchListener(object: Slider.OnSliderTouchListener {
 //            override fun onStartTrackingTouch(slider: Slider) {
 //                // Responds to when slider's touch event is being started
@@ -70,10 +81,7 @@ class PostActivity : AppCompatActivity() {
 //            return@setLabelFormatter "${value.roundToInt()}%"
 //        }
 
-        /*
-        DatePickerの処置。
-         */
-
+        //DatePickerの処置。
         val calender = Calendar.getInstance()
         val year = calender.get(Calendar.YEAR)
         val month = calender.get(Calendar.MONTH)
@@ -94,10 +102,7 @@ class PostActivity : AppCompatActivity() {
 
         }
 
-        /*
-        Categoryの表示。
-         */
-
+        //Categoryの表示。
         val names: List<String> = listOf(
                 getString(R.string.category_convenience_store),
                 getString(R.string.category_lunch),
@@ -118,21 +123,24 @@ class PostActivity : AppCompatActivity() {
             createOriginalCategory(names, iconIds)
         }
 
+        //カテゴリーの表示。
         var categoryId = ""
         var iconId = 0
         var preCard: CardView = findViewById(R.id.dummyCard)
 
         val adapter = CategoryAdapter(this, categoryList, object: CategoryAdapter.OnItemClickListener {
             override fun onItemClick(item: Category, card: CardView) {
-                Toast.makeText(baseContext, item.name + getText(R.string.toast_category_selected), Toast.LENGTH_SHORT).show()
+
+                val toastMessage = getString(R.string.toast_category_selected, item.name)
+                Toast.makeText(baseContext, toastMessage, Toast.LENGTH_SHORT).show()
 
                 categoryId = item.id
                 iconId = item.iconId
 
-                preCard.setBackgroundResource(R.drawable.shape_rounded_corners_white)
+                preCard.setBackgroundResource(R.drawable.shape_rounded_corners)
                 preCard.cardElevation = 6f
 
-                card.setBackgroundResource(R.drawable.shape_rounded_corners_gray)
+                card.setBackgroundResource(R.drawable.shape_rounded_corners_selected)
                 card.cardElevation = 0f
 
                 preCard = card
@@ -143,8 +151,10 @@ class PostActivity : AppCompatActivity() {
         categoryRecyclerView.layoutManager = GridLayoutManager(baseContext, 4)
         categoryRecyclerView.adapter = adapter
 
+        //Recordの保存。
         saveButton.setOnClickListener {
 
+            //データを入力させる工夫をしたい。
             if (datePickText.text.toString() == "") {
                 Snackbar.make(postContainer, getText(R.string.snack_bar_date_empty), Snackbar.LENGTH_SHORT).show()
             } else if (amountEditText.text.toString() == "") {
@@ -162,9 +172,8 @@ class PostActivity : AppCompatActivity() {
 
                 create(satisfaction, amount, title, comment, date, categoryId, iconId)
 
-                sumCategoryAmount(categoryId, amount)
-
                 finish()
+
             }
         }
     }
@@ -174,6 +183,7 @@ class PostActivity : AppCompatActivity() {
         realm.close()
     }
 
+    //Categoryの追加。
     private fun createCategory(name: String, iconId: Int) {
         realm.executeTransaction {
             val category = it.createObject(Category::class.java, UUID.randomUUID().toString())
@@ -182,16 +192,19 @@ class PostActivity : AppCompatActivity() {
         }
     }
 
+    //元から表示しておくCategoryを追加。
     private fun createOriginalCategory(names: List<String>, iconIds: List<Int>) {
         for (i in 0 until names.size) {
             createCategory(names[i], iconIds[i])
         }
     }
 
+    //全てのCategoryを取得する。
     private fun readAllCategory(): RealmResults<Category> {
         return realm.where(Category::class.java).findAll().sort("createdAt", Sort.ASCENDING)
     }
 
+    //Recordの追加。
     private fun create(
         satisfaction: Int,
         amount: Int,
@@ -213,14 +226,7 @@ class PostActivity : AppCompatActivity() {
         }
     }
 
-    private fun sumCategoryAmount(categoryId: String, amount: Int) {
-        realm.executeTransaction {
-            val category = realm.where(Category::class.java).equalTo("id", categoryId).findFirst()
-                    ?: return@executeTransaction
-            category.amountSum += amount
-        }
-    }
-
+    //日付を文字列で取得する。
     private fun getDate(year: Int, month: Int, dayOfMonth: Int): String {
 
         val date: String
@@ -244,6 +250,17 @@ class PostActivity : AppCompatActivity() {
             finish()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private inner class IconClickListener(val index: Int, val icons: List<CardView>): View.OnClickListener {
+        override fun onClick(view: View) {
+            for (i in 0 until icons.size) {
+                icons[i].setBackgroundResource(R.drawable.shape_round)
+                icons[i].cardElevation = 6f
+            }
+            icons[index].setBackgroundResource(R.drawable.shape_round_selected)
+            icons[index].cardElevation = 0f
+        }
     }
 
 }

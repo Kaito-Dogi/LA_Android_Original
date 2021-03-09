@@ -46,14 +46,14 @@ class CalendarFragment : Fragment() {
 
         //今日の平均満足度を表示。
         //calendarAverageText.text = "${calculateSatisfactionAverage(SimpleDateFormat("yyyy/MM/dd").format(Date()).toString())}％"
-        calendarAverageText.text = getString(R.string.text_calendar_average, calculateSatisfactionAverage(SimpleDateFormat("yyyy/MM/dd").format(Date()).toString()))
+        calendarAverageText.text = getString(R.string.text_calendar_average, calculateSatisfactionAverage(SimpleDateFormat("yyyy/MM/dd").format(Date())))
 
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
 
             //日付を取得。
             val date = getDate(year, month, dayOfMonth)
 
-            //その日のれcおρdリストを表示。
+            //その日のRecordを一覧表示。
             recordList = readAtTheDay(date)
             adapter = RecordAdapter(context as Context, recordList, object: RecordAdapter.OnItemClickListener {
                 override fun onItemClick(item: Record) {
@@ -63,7 +63,7 @@ class CalendarFragment : Fragment() {
             recordRecyclerViewInCalendar.adapter = adapter
 
             //その日の平均満足度を表示。
-            calendarAverageText.text = "${calculateSatisfactionAverage(date)}％"
+            calendarAverageText.text = getString(R.string.text_calendar_average, calculateSatisfactionAverage(date))
 
         }
 
@@ -74,7 +74,7 @@ class CalendarFragment : Fragment() {
         realm.close()
     }
 
-    //日付の文字列で取得する処理。
+    //日付を文字列で取得する。
     private fun getDate(year: Int, month: Int, dayOfMonth: Int): String {
 
         val date: String
@@ -93,7 +93,7 @@ class CalendarFragment : Fragment() {
 
     }
 
-    //指定した日付のRecordを取得する処理。
+    //指定した日付のRecordを取得する。
     private fun readAtTheDay(date: String): RealmResults<Record> {
         return realm
             .where(Record::class.java)
@@ -102,7 +102,7 @@ class CalendarFragment : Fragment() {
             .sort("createdAt", Sort.DESCENDING)
     }
 
-    //指定した日付の平均値を求める処理。
+    //指定した日付の平均値を求める。
     private fun calculateSatisfactionAverage(date: String): Int {
 
         //その日のRecordを取得。

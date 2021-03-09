@@ -17,13 +17,12 @@
     <!--chipGroup-->
     <string name="text_choice_ever">全て</string>
     <string name="text_choice_today">今日</string>
-    <string name="text_choice_weekly">1週間</string>
-    <string name="text_choice_monthly">1ヶ月</string>
-    <string name="text_choice_yearly">1年</string>
+    <string name="text_choice_weekly">週間</string>
+    <string name="text_choice_monthly">月間</string>
+    <string name="text_choice_yearly">年間</string>
 
     <!--CalendarFragment-->
     <string name="text_calendar_average">平均満足度：%1$d％</string>
-    <string name="item_record_amount">¥%1$s</string>
 
     <!--PostActivity-->
     <string name="activity_post_title">記録</string>
@@ -45,7 +44,7 @@
     <string name="snack_bar_category_empty">カテゴリーを選んでください！</string>
 
     <!--Toast-->
-    <string name="toast_category_selected">が選択されました</string>
+    <string name="toast_category_selected">%1$sが選択されました</string>
 
     <!--Original Category-->
     <string name="category_convenience_store">コンビニ</string>

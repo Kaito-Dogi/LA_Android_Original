@@ -24,7 +24,6 @@
 
     <!--CalendarFragment-->
     <string name="text_calendar_average">Average satisfaction：%1$d％</string>
-    <string name="item_record_amount">¥%1$s</string>
 
     <!--PostActivity-->
     <string name="activity_post_title">Record</string>
@@ -46,7 +45,7 @@
     <string name="snack_bar_category_empty">Select Category!</string>
 
     <!--Toast-->
-    <string name="toast_category_selected">" "Selected</string>
+    <string name="toast_category_selected">%1$s Selected</string>
 
     <!--Original Category-->
     <string name="category_convenience_store">Convenience Store</string>
