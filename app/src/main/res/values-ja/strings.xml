@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">LA_Original</string>
+
+    <!--MainActivity-->
+    <string name="fab_description">保存</string>
+    <!--overflow_menu-->
+    <string name="how_to_use">使い方</string>
+    <string name="settings">設定</string>
+
+    <!--MainFragment-->
+    <!--tab_layout-->
+    <string name="text_label_chart">グラフ</string>
+    <string name="text_label_calendar">カレンダー</string>
+
+    <!--ChartFragment-->
+    <string name="text_chart_average">平均満足度は%1$d%%です！</string>
+    <!--chipGroup-->
+    <string name="text_choice_ever">全て</string>
+    <string name="text_choice_today">今日</string>
+    <string name="text_choice_weekly">1週間</string>
+    <string name="text_choice_monthly">1ヶ月</string>
+    <string name="text_choice_yearly">1年</string>
+
+    <!--CalendarFragment-->
+    <string name="text_calendar_average">平均満足度：%1$d％</string>
+    <string name="item_record_amount">¥%1$s</string>
+
+    <!--PostActivity-->
+    <string name="activity_post_title">記録</string>
+    <string name="submit_button_text">保存</string>
+
+    <!--hints-->
+    <string name="satisfaction_caption">満足度</string>
+    <string name="date_hint">日付</string>
+    <string name="amount_edit_hint">金額</string>
+    <string name="title_edit_hint">タイトル</string>
+    <string name="comment_edit_hint">メモ</string>
+    <string name="category_caption">カテゴリー</string>
+
+    <!--Snackbar-->
+    <string name="snack_bar_date_empty">日付を入力してください！</string>
+    <string name="snack_bar_amount_empty">金額を入力してください！</string>
+    <string name="snack_bar_title_empty">名前を入力してください！</string>
+    <string name="snack_bar_satisfaction_empty">満足度を調整してください！</string>
+    <string name="snack_bar_category_empty">カテゴリーを選んでください！</string>
+
+    <!--Toast-->
+    <string name="toast_category_selected">が選択されました</string>
+
+    <!--Original Category-->
+    <string name="category_convenience_store">コンビニ</string>
+    <string name="category_lunch">ランチ</string>
+    <string name="category_dinner">ディナー</string>
+    <string name="category_cafe">カフェ</string>
+
+    <!--activity_settings-->
+    <string name="activity_settings_title">設定</string>
+    <string name="income_edit_hint">年収</string>
+    <string name="save_button_text">保存</string>
+
+    <!--activity_how_to_use-->
+    <string name="activity_how_to_use_title">使い方</string>
+
+</resources>

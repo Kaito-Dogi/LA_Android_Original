@@ -36,39 +36,39 @@ class PostActivity : AppCompatActivity() {
         var satisfaction = 0
         var selectedSatisfaction = false
 
-        satisfiedSlider.addOnSliderTouchListener(object: Slider.OnSliderTouchListener {
-            override fun onStartTrackingTouch(slider: Slider) {
-                // Responds to when slider's touch event is being started
-            }
-
-            override fun onStopTrackingTouch(slider: Slider) {
-                // Responds to when slider's touch event is being stopped
-                satisfaction = satisfiedSlider.value.toInt()
-                selectedSatisfaction = true
-            }
-        })
-
-        satisfiedSlider.addOnChangeListener { slider, value, fromUser ->
-            // Responds to when slider's value is changed
-            satisfaction = satisfiedSlider.value.toInt()
-            selectedSatisfaction = true
-        }
-
-        satisfiedIcon.setOnClickListener {
-            satisfiedSlider.value = 100f
-            satisfaction = satisfiedSlider.value.toInt()
-            selectedSatisfaction = true
-        }
-
-        unsatisfiedIcon.setOnClickListener {
-            satisfiedSlider.value = -100f
-            satisfaction = satisfiedSlider.value.toInt()
-            selectedSatisfaction = true
-        }
-
-        satisfiedSlider.setLabelFormatter { value: Float ->
-            return@setLabelFormatter "${value.roundToInt()}%"
-        }
+//        satisfiedSlider.addOnSliderTouchListener(object: Slider.OnSliderTouchListener {
+//            override fun onStartTrackingTouch(slider: Slider) {
+//                // Responds to when slider's touch event is being started
+//            }
+//
+//            override fun onStopTrackingTouch(slider: Slider) {
+//                // Responds to when slider's touch event is being stopped
+//                satisfaction = satisfiedSlider.value.toInt()
+//                selectedSatisfaction = true
+//            }
+//        })
+//
+//        satisfiedSlider.addOnChangeListener { slider, value, fromUser ->
+//            // Responds to when slider's value is changed
+//            satisfaction = satisfiedSlider.value.toInt()
+//            selectedSatisfaction = true
+//        }
+//
+//        satisfiedIcon.setOnClickListener {
+//            satisfiedSlider.value = 100f
+//            satisfaction = satisfiedSlider.value.toInt()
+//            selectedSatisfaction = true
+//        }
+//
+//        unsatisfiedIcon.setOnClickListener {
+//            satisfiedSlider.value = -100f
+//            satisfaction = satisfiedSlider.value.toInt()
+//            selectedSatisfaction = true
+//        }
+//
+//        satisfiedSlider.setLabelFormatter { value: Float ->
+//            return@setLabelFormatter "${value.roundToInt()}%"
+//        }
 
         /*
         DatePickerの処置。
@@ -143,7 +143,7 @@ class PostActivity : AppCompatActivity() {
         categoryRecyclerView.layoutManager = GridLayoutManager(baseContext, 4)
         categoryRecyclerView.adapter = adapter
 
-        submitButton.setOnClickListener {
+        saveButton.setOnClickListener {
 
             if (datePickText.text.toString() == "") {
                 Snackbar.make(postContainer, getText(R.string.snack_bar_date_empty), Snackbar.LENGTH_SHORT).show()
@@ -162,7 +162,7 @@ class PostActivity : AppCompatActivity() {
 
                 create(satisfaction, amount, title, comment, date, categoryId, iconId)
 
-                categoryCount(categoryId, amount)
+                sumCategoryAmount(categoryId, amount)
 
                 finish()
             }
@@ -213,7 +213,7 @@ class PostActivity : AppCompatActivity() {
         }
     }
 
-    private fun categoryCount(categoryId: String, amount: Int) {
+    private fun sumCategoryAmount(categoryId: String, amount: Int) {
         realm.executeTransaction {
             val category = realm.where(Category::class.java).equalTo("id", categoryId).findFirst()
                     ?: return@executeTransaction

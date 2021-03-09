@@ -7,6 +7,16 @@
     android:orientation="vertical"
     tools:context=".CalendarFragment">
 
+    <Switch
+        android:id="@+id/calendarSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="カレンダー"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <CalendarView
         android:id="@+id/calendar"
         android:layout_width="match_parent"
@@ -27,27 +37,20 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            android:id="@+id/averageCaption"
-            android:layout_width="wrap_content"
+            android:id="@+id/calendarAverageText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/average_caption"
+            android:gravity="center"
+            android:text="@string/text_calendar_average"
             android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/averageText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="sans-serif"
-            android:text="0％"
-            android:textSize="18sp" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recordRecyclerViewInCalendar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/calendarSwitch"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calendar" />

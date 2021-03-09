@@ -45,7 +45,8 @@ class CalendarFragment : Fragment() {
         recordRecyclerViewInCalendar.adapter = adapter
 
         //今日の平均満足度を表示。
-        averageText.text = calculateAverageSatisfaction(SimpleDateFormat("yyyy/MM/dd").format(Date()).toString()).toString() + "％"
+        //calendarAverageText.text = "${calculateSatisfactionAverage(SimpleDateFormat("yyyy/MM/dd").format(Date()).toString())}％"
+        calendarAverageText.text = getString(R.string.text_calendar_average, calculateSatisfactionAverage(SimpleDateFormat("yyyy/MM/dd").format(Date()).toString()))
 
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
 
@@ -62,15 +63,11 @@ class CalendarFragment : Fragment() {
             recordRecyclerViewInCalendar.adapter = adapter
 
             //その日の平均満足度を表示。
-            averageText.text = calculateAverageSatisfaction(date).toString() + "％"
+            calendarAverageText.text = "${calculateSatisfactionAverage(date)}％"
 
         }
 
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -106,24 +103,21 @@ class CalendarFragment : Fragment() {
     }
 
     //指定した日付の平均値を求める処理。
-    private fun calculateAverageSatisfaction(date: String): Int {
+    private fun calculateSatisfactionAverage(date: String): Int {
 
         //その日のRecordを取得。
-        val records = realm
-                .where(Record::class.java)
-                .equalTo("date", date)
-                .findAll()
+        val recordList = readAtTheDay(date)
 
         //満足度の合計を求める。
         var satisfactionSum = 0
-        for (i in 0 until records.size) {
-            satisfactionSum += records[i]?.satisfaction as Int
+        for (i in 0 until recordList.size) {
+            satisfactionSum += recordList[i]?.satisfaction as Int
         }
 
         //平均満足度を求める。
         var averageSatisfaction = 0f
-        if (!records.isEmpty()) {
-            averageSatisfaction =  satisfactionSum.toString().toFloat() / records.size
+        if (!recordList.isEmpty()) {
+            averageSatisfaction =  satisfactionSum.toString().toFloat() / recordList.size
         }
 
         return averageSatisfaction.roundToInt()

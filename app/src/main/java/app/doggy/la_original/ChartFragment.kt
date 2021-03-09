@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -15,6 +16,7 @@ import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import io.realm.Realm
+import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.fragment_chart.*
 import kotlin.math.round
@@ -36,14 +38,13 @@ class ChartFragment : Fragment() {
     private val dimensions = mutableListOf<String>()
     private val values = mutableListOf<Float>()
 
-    //出費の合計。
-    private var amountSum = 0f
-
     //収入の合計。
     private val incomeSum = 1030000f
 
     //未登録の金額の合計。
     private var unregisteredSum = 0f
+
+    private val legendList: MutableList<Legend> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,21 +60,11 @@ class ChartFragment : Fragment() {
 
         changeChart(switch)
 
-        val legendList: MutableList<Legend> = mutableListOf()
-        for (i in 0..4) {
-            legendList.add(Legend(
-                "凡例$i",
-                i * 10,
-                R.drawable.ic_baseline_storefront_24
-            ))
-        }
-
         //adapterをインスタンス化する。
         val adapter = LegendAdapter(context as Context)
 
         //RecyclerViewのレイアウトを決める。
         legendRecyclerView.layoutManager = LinearLayoutManager(context as Context) //縦横表示
-        //recyclerView.layoutManager = GridLayoutManager(baseContext,2) //グリッド表示
 
         //RecyclerViewにadapterを渡す。
         legendRecyclerView.adapter = adapter
@@ -86,20 +77,28 @@ class ChartFragment : Fragment() {
                 0 -> {
                     switch = 1
                     changeChart(switch)
+                    adapter.addAll(legendList)
                 }
 
                 1 -> {
                     switch = 0
                     changeChart(switch)
+                    adapter.addAll(legendList)
                 }
             }
+            emptyText.isVisible = realm.where(Record::class.java).findAll().size == 0 && switch == 0
         }
 
     }
 
     override fun onResume() {
         super.onResume()
+
+        emptyText.isVisible = realm.where(Record::class.java).findAll().size == 0 && switch == 0
+
         changeChart(switch)
+
+        chartAverageText.text = getString(R.string.text_chart_average, calculateSatisfactionAverage())
     }
 
     override fun onDestroy() {
@@ -107,10 +106,48 @@ class ChartFragment : Fragment() {
         realm.close()
     }
 
-    //満足度によるグラフのデータを用意。
-    private fun setSatisfactionData() {
+    private fun readAllRecord(): RealmResults<Record> {
+        return realm.where(Record::class.java).findAll().sort("createdAt", Sort.ASCENDING)
+    }
 
-        val recordList = realm.where(Record::class.java).findAll()
+    //平均満足度を求める処理。
+    private fun calculateSatisfactionAverage(): Int {
+
+        val recordList = readAllRecord()
+
+        //満足度の合計を求める。
+        var satisfactionSum = 0
+        for (i in 0 until recordList.size) {
+            satisfactionSum += recordList[i]?.satisfaction as Int
+        }
+
+        //平均満足度を求める。
+        var averageSatisfaction = 0f
+        if (!recordList.isEmpty()) {
+            averageSatisfaction =  satisfactionSum.toString().toFloat() / recordList.size
+        }
+
+        return averageSatisfaction.roundToInt()
+    }
+
+    //出費の合計を求める処理。
+    private fun calculateAmountSum(): Int {
+
+        val recordList = readAllRecord()
+
+        //出費の合計を求める。
+        var amountSum = 0
+        for (i in 0 until recordList.size) {
+            amountSum += recordList[i]?.amount as Int
+        }
+
+        return amountSum
+    }
+
+    //満足度によるグラフのデータを用意。
+    private fun setSatisfactionData(switch: Int) {
+
+        val recordList = readAllRecord()
 
         //満足度の項目
         var satisfactionSum = 0
@@ -118,9 +155,6 @@ class ChartFragment : Fragment() {
         var unSatisfactionSum = 0
 
         for (i in 0 until recordList.size) {
-
-            //全出費を求める。
-            amountSum += recordList[i]?.amount as Int
 
             //満足度毎に、出費の合計を求める。
             when {
@@ -151,58 +185,46 @@ class ChartFragment : Fragment() {
             values.add(unSatisfactionSum.toString().toFloat())
         }
 
-        //割合を求める。
-        for (i in 0 until values.size) {
-            values[i] = values[i] * 100 / incomeSum
-            values[i] = round(values[i])
-        }
+        when(switch) {
+            0 -> {
+                //割合を求める。
+                for (i in 0 until values.size) {
+                    values[i] = values[i] * 100 / calculateAmountSum()
+                    values[i] = round(values[i])
+                }
+            }
 
-        //未登録の出費を求める。
-        unregisteredSum = incomeSum - amountSum
-        unregisteredSum = unregisteredSum * 100f / incomeSum
+            1 -> {
+                //割合を求める。
+                for (i in 0 until values.size) {
+                    values[i] = values[i] * 100 / incomeSum
+                    values[i] = round(values[i])
+                }
 
-        //未登録の出費をグラフのデータに加える。
-        dimensions.add("未登録")
-        values.add(unregisteredSum)
+                //未登録の出費を求める。
+                unregisteredSum = incomeSum - calculateAmountSum()
+                unregisteredSum = unregisteredSum * 100f / incomeSum
 
-    }
-
-    //カテゴリ毎のデータを用意。
-    private fun setCategoryData() {
-
-        val categoryList = realm.where(Category::class.java).findAll().sort("amountSum", Sort.DESCENDING)
-
-        //カテゴリ毎の出費の合計を求める。
-        for (i in 0 until categoryList.size) {
-            if (categoryList[i]?.amountSum as Int > 0) {
-                dimensions.add(categoryList[i]?.name as String)
-                values.add(categoryList[i]?.amountSum.toString().toFloat())
+                //未登録の出費をグラフのデータに加える。
+                dimensions.add("未登録")
+                values.add(unregisteredSum)
             }
         }
 
-        //全カテゴリの出費を求める。
-        for (i in 0 until values.size) {
-            amountSum += values[i]
+        legendList.clear()
+
+        for (i in 0 until dimensions.size) {
+            legendList.add(Legend(
+                dimensions[i],
+                values[i].roundToInt(),
+                R.drawable.ic_baseline_sentiment_very_satisfied_24
+            ))
         }
-
-        //カテゴリ毎の割合を求める。
-        for (i in 0 until values.size) {
-            values[i] = values[i] * 100f / incomeSum
-            values[i] = round(values[i])
-        }
-
-        //未登録の出費を求める。
-        unregisteredSum = incomeSum - amountSum
-        unregisteredSum = unregisteredSum * 100f / incomeSum
-
-        //未登録の出費をグラフのデータに加える。
-        dimensions.add("未登録")
-        values.add(unregisteredSum)
 
     }
 
     //グラフを描画する処理。
-    private fun drawChart() {
+    private fun drawChart(switch: Int) {
 
         //Entryにデータを格納。
         val entryList = mutableListOf<PieEntry>()
@@ -241,8 +263,17 @@ class ChartFragment : Fragment() {
         //グラフ内に表示する、各項目の名前のサイズ。
         pieChart.setEntryLabelTextSize(10f)
         //グラフの中央に文字を表示。
-        pieChart.centerText = "${incomeSum.roundToInt()}円"
-        pieChart.setCenterTextSize(20f)
+        when(switch) {
+            0 -> {
+                if (calculateAmountSum() == 0) {
+                    pieChart.centerText = ""
+                } else {
+                    pieChart.centerText = "¥${"%,d".format(calculateAmountSum())}"
+                }
+            }
+            1 -> pieChart.centerText = "¥${"%,d".format(incomeSum.roundToInt())}"
+        }
+        pieChart.setCenterTextSize(18f)
         //グラフに触れなくする。
         pieChart.setTouchEnabled(false)
 
@@ -253,17 +284,12 @@ class ChartFragment : Fragment() {
         dimensions.clear()
         values.clear()
 
-        //データをリセット。
-        amountSum = 0f
-
     }
 
     //表示するグラフを変える処理。
     private fun changeChart(switch: Int) {
-        when(switch) {
-            0 -> setSatisfactionData()
-            1 -> setCategoryData()
-        }
-        drawChart()
+        setSatisfactionData(switch)
+        drawChart(switch)
     }
+
 }

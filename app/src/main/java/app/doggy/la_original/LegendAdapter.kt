@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.item_legend.view.*
 class LegendAdapter(private val context: Context):
     RecyclerView.Adapter<LegendAdapter.ViewHolder>() {
 
-    val items: MutableList<Legend> = mutableListOf()
+    private val items: MutableList<Legend> = mutableListOf()
     
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_legend, parent, false)
@@ -23,7 +23,7 @@ class LegendAdapter(private val context: Context):
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         holder.titleText.text = item.title
-        holder.ratioText.text = item.ratio.toString()
+        holder.ratioText.text = item.ratio.toString() + "％"
         if (item.iconId == 0) {
             holder.icon.setImageResource(R.drawable.ic_baseline_sentiment_very_satisfied_24)
         } else {
