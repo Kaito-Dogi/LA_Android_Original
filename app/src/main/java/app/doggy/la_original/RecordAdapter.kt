@@ -30,7 +30,7 @@ class RecordAdapter(
 
         holder.titleText.text = record.title
         //holder.satisfactionText.text = "${record.satisfaction}％"
-        holder.amountText.text = "¥ ${"%,d".format(record.amount)}"
+        holder.amountText.text = "¥${"%,d".format(record.amount)}"
         holder.icon.setImageResource(record.iconId)
     }
 

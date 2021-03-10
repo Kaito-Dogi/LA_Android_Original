@@ -56,24 +56,14 @@ class ChartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //Legendを取得する。
-        var legendList = readAllLegend(chartFormat)
-
-        //Legendを生成。
-        if (legendList.isEmpty()) {
-            createLegends(chartFormat)
-        }
-
-        val adapter = LegendAdapter(context as Context, legendList, object: LegendAdapter.OnItemClickListener {
-            override fun onItemClick(item: Legend) {
-
-            }
-        },true)
-
         //legendRecyclerViewの設定。
         legendRecyclerView.setHasFixedSize(true)
-        legendRecyclerView.layoutManager = LinearLayoutManager(context as Context) //縦横表示
-        legendRecyclerView.adapter = adapter
+        legendRecyclerView.layoutManager = LinearLayoutManager(context as Context)
+
+        //Legendを生成。
+        if (realm.where(Legend::class.java).findAll().isEmpty()) {
+            createLegends()
+        }
 
         //円グラフを関連付け。
         pieChart = view.findViewById(R.id.pie_chart)
@@ -89,12 +79,20 @@ class ChartFragment : Fragment() {
                     drawChart(chartFormat)
 
                     //再度Legendを取得する。
-                    legendList = readAllLegend(chartFormat)
+                    val legendList = readAllLegend(chartFormat)
 
-                    //Legendを生成。
-                    if (legendList.isEmpty()) {
-                        createLegends(chartFormat)
-                    }
+                    //Adapterをインスタンス化。
+                    val adapter = LegendAdapter(context as Context, legendList, object: LegendAdapter.OnItemClickListener {
+                        override fun onItemClick(item: Legend) {
+
+                        }
+                    },true)
+
+                    //RecyclerViewにAdapterを渡す。
+                    legendRecyclerView.adapter = adapter
+
+                    //Legendのratioを更新。
+                    updateLegendRatio()
                 }
 
                 1 -> {
@@ -105,12 +103,20 @@ class ChartFragment : Fragment() {
                     drawChart(chartFormat)
 
                     //再度Legendを取得する。
-                    legendList = readAllLegend(chartFormat)
+                    val legendList = readAllLegend(chartFormat)
 
-                    //Legendを生成。
-                    if (legendList.isEmpty()) {
-                        createLegends(chartFormat)
-                    }
+                    //Adapterをインスタンス化。
+                    val adapter = LegendAdapter(context as Context, legendList, object: LegendAdapter.OnItemClickListener {
+                        override fun onItemClick(item: Legend) {
+
+                        }
+                    },true)
+
+                    //RecyclerViewにAdapterを渡す。
+                    legendRecyclerView.adapter = adapter
+
+                    //Legendのratioを更新。
+                    updateLegendRatio()
                 }
             }
         }
@@ -122,6 +128,22 @@ class ChartFragment : Fragment() {
 
         //グラフの表示。
         drawChart(chartFormat)
+
+        //Legendを取得する。
+        val legendList = readAllLegend(chartFormat)
+
+        //Adapterをインスタンス化。
+        val adapter = LegendAdapter(context as Context, legendList, object: LegendAdapter.OnItemClickListener {
+            override fun onItemClick(item: Legend) {
+
+            }
+        },true)
+
+        //RecyclerViewにAdapterを渡す。
+        legendRecyclerView.adapter = adapter
+
+        //Legendのratioを更新。
+        updateLegendRatio()
 
         //chartAverageText.text = getString(R.string.text_chart_average, calculateSatisfactionAverage())
     }
@@ -143,7 +165,7 @@ class ChartFragment : Fragment() {
     }
 
     //初回起動時にLegendを生成。
-    private fun createLegends(chartFormat: Int) {
+    private fun createLegends() {
 
         val titleList: List<String> = listOf("絶望", "不満", "どちらでもない", "満足", "大満足")
         val iconList: List<Int> = listOf(
@@ -154,31 +176,86 @@ class ChartFragment : Fragment() {
             R.drawable.ic_baseline_sentiment_very_satisfied_24
         )
 
-        when(chartFormat) {
-            0 -> {
-                for (i in 0..4) {
-                    createLegend(titleList[i], iconList[i], i, chartFormat)
-                }
-            }
-
-            1 -> {
-                for (i in 0..4) {
-                    createLegend(titleList[i], iconList[i], i, chartFormat)
-                }
-                createLegend("未登録", R.drawable.ic_baseline_savings_24, -1, chartFormat)
-            }
+        for (i in 0..4) {
+            createLegend(titleList[i], iconList[i], i, 0)
+            createLegend(titleList[i], iconList[i], i, 1)
         }
+        createLegend("未登録", R.drawable.ic_baseline_savings_24, -1, 1)
+
     }
 
     //Legendを取得。
     private fun readAllLegend(chartFormat: Int): RealmResults<Legend> {
-        return realm.where(Legend::class.java).equalTo("chartFormat", chartFormat).greaterThan("ratio", 0).findAll().sort("satisfaction", Sort.DESCENDING)
+        return realm.where(Legend::class.java).equalTo("chartFormat", chartFormat).greaterThan("ratio", 0f).findAll().sort("satisfaction", Sort.DESCENDING)
     }
 
     //Recordを取得。
     //期間を絞り込めるようにする。
     private fun readAllRecord(): RealmResults<Record> {
         return realm.where(Record::class.java).findAll().sort("createdAt", Sort.ASCENDING)
+    }
+
+    //Legendのratioを更新する処理。
+    private fun updateLegendRatio() {
+        val recordList = readAllRecord()
+
+        //出費の合計の変数。
+        var veryUnSatisfactionSum = 0
+        var unSatisfactionSum = 0
+        var neitherSum = 0
+        var satisfactionSum = 0
+        var verySatisfactionSum = 0
+
+        for (i in 0 until recordList.size) {
+            //満足度毎に、出費の合計を求める。
+            when(recordList[i]?.satisfaction) {
+                0 -> veryUnSatisfactionSum += recordList[i]?.amount as Int
+                1 -> unSatisfactionSum += recordList[i]?.amount as Int
+                2 -> neitherSum += recordList[i]?.amount as Int
+                3 -> satisfactionSum += recordList[i]?.amount as Int
+                4 -> verySatisfactionSum += recordList[i]?.amount as Int
+            }
+        }
+
+        //未登録の出費を求める。
+        val unregisteredSum = incomeSum - getAmountSum()
+
+        realm.executeTransaction {
+            val legendList = realm.where(Legend::class.java).findAll()
+
+            var denominator = 0
+            for (i in 0 until legendList.size) {
+                when(legendList[i]?.chartFormat) {
+                    0 -> {
+                        denominator = getAmountSum()
+                        when(legendList[i]?.satisfaction) {
+                            0 -> legendList[i]?.ratio = veryUnSatisfactionSum.toString().toFloat()
+                            1 -> legendList[i]?.ratio = unSatisfactionSum.toString().toFloat()
+                            2 -> legendList[i]?.ratio = neitherSum.toString().toFloat()
+                            3 -> legendList[i]?.ratio = satisfactionSum.toString().toFloat()
+                            4 -> legendList[i]?.ratio = verySatisfactionSum.toString().toFloat()
+                        }
+                    }
+
+                    1 -> {
+                        denominator = incomeSum
+                        when(legendList[i]?.satisfaction) {
+                            0 -> legendList[i]?.ratio = veryUnSatisfactionSum.toString().toFloat()
+                            1 -> legendList[i]?.ratio = unSatisfactionSum.toString().toFloat()
+                            2 -> legendList[i]?.ratio = neitherSum.toString().toFloat()
+                            3 -> legendList[i]?.ratio = satisfactionSum.toString().toFloat()
+                            4 -> legendList[i]?.ratio = verySatisfactionSum.toString().toFloat()
+                            -1 -> legendList[i]?.ratio = unregisteredSum.toString().toFloat()
+                        }
+                    }
+                }
+
+                if (denominator != 0) {
+                    legendList[i]?.ratio = legendList[i]?.ratio as Float * 100f / denominator.toString().toFloat()
+                }
+
+            }
+        }
     }
 
 //    //平均満足度を求める処理。

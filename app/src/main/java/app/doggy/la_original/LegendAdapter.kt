@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.realm.OrderedRealmCollection
 import io.realm.RealmRecyclerViewAdapter
 import kotlinx.android.synthetic.main.item_legend.view.*
+import kotlin.math.roundToInt
 
 class LegendAdapter(
     private val context: Context,
@@ -29,7 +30,7 @@ class LegendAdapter(
         }
 
         holder.titleText.text = legend.title
-        holder.ratioText.text = "${legend.ratio} ％"
+        holder.ratioText.text = "${legend.ratio.roundToInt()}％"
         holder.icon.setImageResource(legend.iconId)
     }
 

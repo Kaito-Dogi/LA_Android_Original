@@ -10,6 +10,6 @@ open class Legend(
     open var iconId: Int = 0,
     open var satisfaction: Int = 0,
     open var chartFormat: Int = 0,
-    open var ratio: Int = 0,
+    open var ratio: Float = 0f,
     open var createdAt: Date = Date(System.currentTimeMillis())
 ): RealmObject()
