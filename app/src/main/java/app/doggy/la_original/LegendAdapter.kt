@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.realm.OrderedRealmCollection
 import io.realm.RealmRecyclerViewAdapter
 import kotlinx.android.synthetic.main.item_legend.view.*
+import kotlin.math.round
 import kotlin.math.roundToInt
 
 class LegendAdapter(
@@ -30,8 +31,14 @@ class LegendAdapter(
         }
 
         holder.titleText.text = legend.title
-        holder.ratioText.text = "${legend.ratio.roundToInt()}％"
         holder.icon.setImageResource(legend.iconId)
+
+        if (legend.ratio < 1.00f) {
+            holder.ratioText.text = "${round(legend.ratio * 100) / 100}％"
+        } else {
+            holder.ratioText.text = "${legend.ratio.roundToInt()}％"
+        }
+
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): LegendViewHolder {
