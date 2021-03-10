@@ -39,9 +39,9 @@
     <!--Snackbar-->
     <string name="snack_bar_date_empty">日付を入力してください！</string>
     <string name="snack_bar_amount_empty">金額を入力してください！</string>
-    <string name="snack_bar_title_empty">名前を入力してください！</string>
-    <string name="snack_bar_satisfaction_empty">満足度を調整してください！</string>
-    <string name="snack_bar_category_empty">カテゴリーを選んでください！</string>
+    <string name="snack_bar_title_empty">タイトルを入力してください！</string>
+    <string name="snack_bar_satisfaction_empty">満足度を選択してください！</string>
+    <string name="snack_bar_category_empty">カテゴリーを選択ください！</string>
 
     <!--Toast-->
     <string name="toast_category_selected">%1$sが選択されました</string>

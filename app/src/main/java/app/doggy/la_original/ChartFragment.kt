@@ -7,7 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -18,7 +20,9 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
+import kotlinx.android.synthetic.main.activity_post.*
 import kotlinx.android.synthetic.main.fragment_chart.*
+import java.util.*
 import kotlin.math.round
 import kotlin.math.roundToInt
 
@@ -32,6 +36,7 @@ class ChartFragment : Fragment() {
     private lateinit var pieChart: PieChart
 
     //グラフの表示形式を管理する変数。
+    private var chartFormat = 0
     private var switch = 0
 
     //グラフに表示するデータ。
@@ -56,34 +61,40 @@ class ChartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Legendを取得する。
+        val legendList = readAllLegend(chartFormat)
+
+        if (legendList.isEmpty()) {
+            createLegends(chartFormat)
+        }
+
+        val adapter = LegendAdapter(context as Context, legendList, object: LegendAdapter.OnItemClickListener {
+            override fun onItemClick(item: Legend) {
+
+            }
+        },true)
+
+        //legendRecyclerViewの設定。
+        legendRecyclerView.setHasFixedSize(true)
+        legendRecyclerView.layoutManager = LinearLayoutManager(context as Context) //縦横表示
+        legendRecyclerView.adapter = adapter
+
         pieChart = view.findViewById(R.id.pie_chart)
 
         changeChart(switch)
-
-        //adapterをインスタンス化する。
-        val adapter = LegendAdapter(context as Context)
-
-        //RecyclerViewのレイアウトを決める。
-        legendRecyclerView.layoutManager = LinearLayoutManager(context as Context) //縦横表示
-
-        //RecyclerViewにadapterを渡す。
-        legendRecyclerView.adapter = adapter
-
-        //RecyclerViewにデータを表示する。
-        adapter.addAll(legendList)
 
         chartSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             when(switch) {
                 0 -> {
                     switch = 1
                     changeChart(switch)
-                    adapter.addAll(legendList)
+                    //adapter.addAll(legendList)
                 }
 
                 1 -> {
                     switch = 0
                     changeChart(switch)
-                    adapter.addAll(legendList)
+                    //adapter.addAll(legendList)
                 }
             }
             emptyText.isVisible = realm.where(Record::class.java).findAll().size == 0 && switch == 0
@@ -104,6 +115,47 @@ class ChartFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
+    }
+
+    private fun createLegend(title: String, iconId: Int, satisfaction: Int, chartFormat: Int) {
+        realm.executeTransaction {
+            val legend = it.createObject(Legend::class.java, UUID.randomUUID().toString())
+            legend.title = title
+            legend.iconId = iconId
+            legend.satisfaction = satisfaction
+            legend.chartFormat = chartFormat
+        }
+    }
+
+    private fun createLegends(chartFormat: Int) {
+
+        val titleList: List<String> = listOf("絶望", "不満", "どちらでもない", "満足", "大満足")
+        val iconList: List<Int> = listOf(
+            R.drawable.ic_baseline_sentiment_very_dissatisfied_24,
+            R.drawable.ic_baseline_sentiment_dissatisfied_24,
+            R.drawable.ic_baseline_sentiment_neutral_24,
+            R.drawable.ic_baseline_sentiment_satisfied_24,
+            R.drawable.ic_baseline_sentiment_very_satisfied_24
+        )
+
+        when(chartFormat) {
+            0 -> {
+                for (i in 0..4) {
+                    createLegend(titleList[i], iconList[i], i, chartFormat)
+                }
+            }
+
+            1 -> {
+                for (i in 0..4) {
+                    createLegend(titleList[i], iconList[i], i, chartFormat)
+                }
+                createLegend("未登録", R.drawable.ic_baseline_savings_24, -1, chartFormat)
+            }
+        }
+    }
+
+    private fun readAllLegend(chartFormat: Int): RealmResults<Legend> {
+        return realm.where(Legend::class.java).equalTo("chartFormat", chartFormat).findAll().sort("satisfaction", Sort.DESCENDING)
     }
 
     private fun readAllRecord(): RealmResults<Record> {
@@ -213,13 +265,13 @@ class ChartFragment : Fragment() {
 
         legendList.clear()
 
-        for (i in 0 until dimensions.size) {
-            legendList.add(Legend(
-                dimensions[i],
-                values[i].roundToInt(),
-                R.drawable.ic_baseline_sentiment_very_satisfied_24
-            ))
-        }
+//        for (i in 0 until dimensions.size) {
+//            legendList.add(Legend(
+//                dimensions[i],
+//                values[i].roundToInt(),
+//                R.drawable.ic_baseline_sentiment_very_satisfied_24
+//            ))
+//        }
 
     }
 

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -24,6 +25,9 @@ class PostActivity : AppCompatActivity() {
         Realm.getDefaultInstance()
     }
 
+    //満足度。
+    private var satisfaction = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post)
@@ -31,9 +35,7 @@ class PostActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setTitle(R.string.activity_post_title)
 
-        var satisfaction = 0
-        var selectedSatisfaction = true
-
+        //アイコンを管理するリスト。
         val icons: List<CardView> = listOf(
             veryUnsatisfiedIcon,
             unsatisfiedIcon,
@@ -42,6 +44,7 @@ class PostActivity : AppCompatActivity() {
             verySatisfiedIcon
         )
 
+        //アイコンにOnClickListenerを設定。
         for (i in 0 until icons.size) {
             icons[i].setOnClickListener(IconClickListener(i, icons))
         }
@@ -88,6 +91,8 @@ class PostActivity : AppCompatActivity() {
         val day = calender.get(Calendar.DAY_OF_MONTH)
 
         datePickText.setOnClickListener {
+
+            //datePickerをインスタンス化。
             val datePickerDialog = DatePickerDialog(
                 this,
                 DatePickerDialog.OnDateSetListener{view,year,month,dayOfMonth ->
@@ -98,11 +103,13 @@ class PostActivity : AppCompatActivity() {
                 day
             )
 
+            //datePickerを起動。
             datePickerDialog.show()
 
         }
 
         //Categoryの表示。
+        //Categoryの名前。
         val names: List<String> = listOf(
                 getString(R.string.category_convenience_store),
                 getString(R.string.category_lunch),
@@ -110,6 +117,7 @@ class PostActivity : AppCompatActivity() {
                 getString(R.string.category_cafe)
         )
 
+        //Categoryのアイコン。
         val iconIds: List<Int> = listOf(
                 R.drawable.ic_baseline_storefront_24,
                 R.drawable.ic_baseline_lunch_dining_24,
@@ -117,8 +125,10 @@ class PostActivity : AppCompatActivity() {
                 R.drawable.ic_baseline_coffee_24
         )
 
+        //Categoryのデータを取得。
         val categoryList = readAllCategory()
 
+        //初回起動時にオリジナルのCategoryを生成。
         if (readAllCategory().isEmpty()) {
             createOriginalCategory(names, iconIds)
         }
@@ -131,8 +141,8 @@ class PostActivity : AppCompatActivity() {
         val adapter = CategoryAdapter(this, categoryList, object: CategoryAdapter.OnItemClickListener {
             override fun onItemClick(item: Category, card: CardView) {
 
-                val toastMessage = getString(R.string.toast_category_selected, item.name)
-                Toast.makeText(baseContext, toastMessage, Toast.LENGTH_SHORT).show()
+//                val toastMessage = getString(R.string.toast_category_selected, item.name)
+//                Toast.makeText(baseContext, toastMessage, Toast.LENGTH_SHORT).show()
 
                 categoryId = item.id
                 iconId = item.iconId
@@ -147,6 +157,7 @@ class PostActivity : AppCompatActivity() {
             }
         },true)
 
+        //categoryRecyclerViewの設定。
         categoryRecyclerView.setHasFixedSize(true)
         categoryRecyclerView.layoutManager = GridLayoutManager(baseContext, 4)
         categoryRecyclerView.adapter = adapter
@@ -156,15 +167,18 @@ class PostActivity : AppCompatActivity() {
 
             //データを入力させる工夫をしたい。
             if (datePickText.text.toString() == "") {
-                Snackbar.make(postContainer, getText(R.string.snack_bar_date_empty), Snackbar.LENGTH_SHORT).show()
-            } else if (amountEditText.text.toString() == "") {
-                Snackbar.make(postContainer, getText(R.string.snack_bar_amount_empty), Snackbar.LENGTH_SHORT).show()
-            } else if (titleEditText.text.toString() == "") {
-                Snackbar.make(postContainer, getText(R.string.snack_bar_title_empty), Snackbar.LENGTH_SHORT).show()
-            } else if (!selectedSatisfaction) {
-                Snackbar.make(postContainer, getText(R.string.snack_bar_satisfaction_empty), Snackbar.LENGTH_SHORT).show()
-            } else {
+                makeSnackbar(contextView, R.string.snack_bar_date_empty)
 
+            } else if (amountEditText.text.toString() == "") {
+                makeSnackbar(contextView, R.string.snack_bar_amount_empty)
+
+            } else if (titleEditText.text.toString() == "") {
+                makeSnackbar(contextView, R.string.snack_bar_title_empty)
+
+            } else if (satisfaction == -1) {
+                makeSnackbar(contextView, R.string.snack_bar_satisfaction_empty)
+
+            } else {
                 val amount = amountEditText.text.toString().toInt()
                 val title = titleEditText.text.toString()
                 val comment = commentEditText.text.toString()
@@ -245,6 +259,18 @@ class PostActivity : AppCompatActivity() {
 
     }
 
+    private fun makeSnackbar(view: View, textId: Int) {
+
+        val snackbar = Snackbar.make(view, getText(textId), Snackbar.LENGTH_SHORT)
+
+        snackbar.setAction("OK") {
+            snackbar.dismiss()
+        }
+
+        snackbar.show()
+
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
             finish()
@@ -254,12 +280,20 @@ class PostActivity : AppCompatActivity() {
 
     private inner class IconClickListener(val index: Int, val icons: List<CardView>): View.OnClickListener {
         override fun onClick(view: View) {
+
+            //全てのアイコンを選択されていない状態にする。
             for (i in 0 until icons.size) {
                 icons[i].setBackgroundResource(R.drawable.shape_round)
                 icons[i].cardElevation = 6f
             }
+
+            //押したアイコンを選択された状態にする。
             icons[index].setBackgroundResource(R.drawable.shape_round_selected)
             icons[index].cardElevation = 0f
+
+            //satisfactionに満足度代入。
+            satisfaction = index
+
         }
     }
 

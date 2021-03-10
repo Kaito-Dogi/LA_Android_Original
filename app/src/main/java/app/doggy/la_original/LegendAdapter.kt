@@ -5,46 +5,47 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import io.realm.OrderedRealmCollection
+import io.realm.RealmRecyclerViewAdapter
 import kotlinx.android.synthetic.main.item_legend.view.*
 
-class LegendAdapter(private val context: Context):
-    RecyclerView.Adapter<LegendAdapter.ViewHolder>() {
+class LegendAdapter(
+    private val context: Context,
+    private var legendList: OrderedRealmCollection<Legend>?,
+    private var listener: OnItemClickListener,
+    private val autoUpdate: Boolean
+): RealmRecyclerViewAdapter<Legend, LegendAdapter.LegendViewHolder>(legendList, autoUpdate) {
 
-    private val items: MutableList<Legend> = mutableListOf()
-    
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_legend, parent, false)
-        return ViewHolder(view)
-    }
+    override fun getItemCount(): Int = legendList?.size ?: 0
 
-    //itemsのposition番目の要素をViewHolderに表示する。
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = items[position]
-        holder.titleText.text = item.title
-        holder.ratioText.text = item.ratio.toString() + "％"
-        if (item.iconId == 0) {
-            holder.icon.setImageResource(R.drawable.ic_baseline_sentiment_very_satisfied_24)
-        } else {
-            holder.icon.setImageResource(item.iconId)
+    override fun onBindViewHolder(holder: LegendViewHolder, position: Int) {
+        val legend: Legend = legendList?.get(position) ?: return
+
+        holder.container.setOnClickListener{
+            listener.onItemClick(legend)
         }
+
+        holder.titleText.text = legend.title
+        holder.ratioText.text = "${legend.ratio} ％"
+        holder.icon.setImageResource(legend.iconId)
     }
 
-    override fun getItemCount(): Int {
-        return items.size
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): LegendViewHolder {
+        val v = LayoutInflater.from(context).inflate(R.layout.item_legend, viewGroup, false)
+        return LegendViewHolder(v)
     }
 
-    //Adapterにデータを登録するためのメソッド。
-    fun addAll(items: List<Legend>) {
-        this.items.addAll(items)
-        notifyDataSetChanged()
-    }
-
-    //複数のViewを保持するクラス。
-    class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    class LegendViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val container : LinearLayout = view.legendContainer
         val titleText: TextView = view.legendTitleText
         val ratioText: TextView = view.ratioText
         val icon: ImageView = view.legendIcon
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(item: Legend)
     }
 }

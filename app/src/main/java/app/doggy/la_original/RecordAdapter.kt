@@ -29,8 +29,8 @@ class RecordAdapter(
         }
 
         holder.titleText.text = record.title
-        holder.satisfactionText.text = "${record.satisfaction}％"
-        holder.amountText.text = "¥${"%,d".format(record.amount)}"
+        //holder.satisfactionText.text = "${record.satisfaction}％"
+        holder.amountText.text = "¥ ${"%,d".format(record.amount)}"
         holder.icon.setImageResource(record.iconId)
     }
 
@@ -42,7 +42,7 @@ class RecordAdapter(
     class RecordViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val container : LinearLayout = view.recordContainer
         val titleText: TextView = view.titleText
-        val satisfactionText: TextView = view.satisfactionText
+        //val satisfactionText: TextView = view.satisfactionText
         val amountText: TextView = view.amountText
         val icon: ImageView = view.recordIcon
     }
