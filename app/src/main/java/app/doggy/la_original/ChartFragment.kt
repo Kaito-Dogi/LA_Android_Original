@@ -1,6 +1,7 @@
 package app.doggy.la_original
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -37,19 +38,13 @@ class ChartFragment : Fragment() {
 
     //グラフの表示形式を管理する変数。
     private var chartFormat = 0
-    private var switch = 0
 
-    //グラフに表示するデータ。
+    //グラフのデータ。
     private val dimensions = mutableListOf<String>()
     private val values = mutableListOf<Float>()
 
     //収入の合計。
-    private val incomeSum = 1030000f
-
-    //未登録の金額の合計。
-    private var unregisteredSum = 0f
-
-    private val legendList: MutableList<Legend> = mutableListOf()
+    private val incomeSum = 1030000
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,8 +57,9 @@ class ChartFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //Legendを取得する。
-        val legendList = readAllLegend(chartFormat)
+        var legendList = readAllLegend(chartFormat)
 
+        //Legendを生成。
         if (legendList.isEmpty()) {
             createLegends(chartFormat)
         }
@@ -79,25 +75,44 @@ class ChartFragment : Fragment() {
         legendRecyclerView.layoutManager = LinearLayoutManager(context as Context) //縦横表示
         legendRecyclerView.adapter = adapter
 
+        //円グラフを関連付け。
         pieChart = view.findViewById(R.id.pie_chart)
 
-        changeChart(switch)
-
+        //Switchの処理。
         chartSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-            when(switch) {
+            when(chartFormat) {
                 0 -> {
-                    switch = 1
-                    changeChart(switch)
-                    //adapter.addAll(legendList)
+                    //グラフを切り替える。
+                    chartFormat = 1
+
+                    //グラフの表示。
+                    drawChart(chartFormat)
+
+                    //再度Legendを取得する。
+                    legendList = readAllLegend(chartFormat)
+
+                    //Legendを生成。
+                    if (legendList.isEmpty()) {
+                        createLegends(chartFormat)
+                    }
                 }
 
                 1 -> {
-                    switch = 0
-                    changeChart(switch)
-                    //adapter.addAll(legendList)
+                    //グラフを切り替える。
+                    chartFormat = 0
+
+                    //グラフの表示。
+                    drawChart(chartFormat)
+
+                    //再度Legendを取得する。
+                    legendList = readAllLegend(chartFormat)
+
+                    //Legendを生成。
+                    if (legendList.isEmpty()) {
+                        createLegends(chartFormat)
+                    }
                 }
             }
-            emptyText.isVisible = realm.where(Record::class.java).findAll().size == 0 && switch == 0
         }
 
     }
@@ -105,11 +120,10 @@ class ChartFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        emptyText.isVisible = realm.where(Record::class.java).findAll().size == 0 && switch == 0
+        //グラフの表示。
+        drawChart(chartFormat)
 
-        changeChart(switch)
-
-        chartAverageText.text = getString(R.string.text_chart_average, calculateSatisfactionAverage())
+        //chartAverageText.text = getString(R.string.text_chart_average, calculateSatisfactionAverage())
     }
 
     override fun onDestroy() {
@@ -117,6 +131,7 @@ class ChartFragment : Fragment() {
         realm.close()
     }
 
+    //Legendの生成。
     private fun createLegend(title: String, iconId: Int, satisfaction: Int, chartFormat: Int) {
         realm.executeTransaction {
             val legend = it.createObject(Legend::class.java, UUID.randomUUID().toString())
@@ -127,6 +142,7 @@ class ChartFragment : Fragment() {
         }
     }
 
+    //初回起動時にLegendを生成。
     private fun createLegends(chartFormat: Int) {
 
         val titleList: List<String> = listOf("絶望", "不満", "どちらでもない", "満足", "大満足")
@@ -154,36 +170,39 @@ class ChartFragment : Fragment() {
         }
     }
 
+    //Legendを取得。
     private fun readAllLegend(chartFormat: Int): RealmResults<Legend> {
-        return realm.where(Legend::class.java).equalTo("chartFormat", chartFormat).findAll().sort("satisfaction", Sort.DESCENDING)
+        return realm.where(Legend::class.java).equalTo("chartFormat", chartFormat).greaterThan("ratio", 0).findAll().sort("satisfaction", Sort.DESCENDING)
     }
 
+    //Recordを取得。
+    //期間を絞り込めるようにする。
     private fun readAllRecord(): RealmResults<Record> {
         return realm.where(Record::class.java).findAll().sort("createdAt", Sort.ASCENDING)
     }
 
-    //平均満足度を求める処理。
-    private fun calculateSatisfactionAverage(): Int {
+//    //平均満足度を求める処理。
+//    private fun calculateSatisfactionAverage(): Int {
+//
+//        val recordList = readAllRecord()
+//
+//        //満足度の合計を求める。
+//        var satisfactionSum = 0
+//        for (i in 0 until recordList.size) {
+//            satisfactionSum += recordList[i]?.satisfaction as Int
+//        }
+//
+//        //平均満足度を求める。
+//        var averageSatisfaction = 0f
+//        if (!recordList.isEmpty()) {
+//            averageSatisfaction =  satisfactionSum.toString().toFloat() / recordList.size
+//        }
+//
+//        return averageSatisfaction.roundToInt()
+//    }
 
-        val recordList = readAllRecord()
-
-        //満足度の合計を求める。
-        var satisfactionSum = 0
-        for (i in 0 until recordList.size) {
-            satisfactionSum += recordList[i]?.satisfaction as Int
-        }
-
-        //平均満足度を求める。
-        var averageSatisfaction = 0f
-        if (!recordList.isEmpty()) {
-            averageSatisfaction =  satisfactionSum.toString().toFloat() / recordList.size
-        }
-
-        return averageSatisfaction.roundToInt()
-    }
-
-    //出費の合計を求める処理。
-    private fun calculateAmountSum(): Int {
+    //出費の合計を返す処理。
+    private fun getAmountSum(): Int {
 
         val recordList = readAllRecord()
 
@@ -197,86 +216,81 @@ class ChartFragment : Fragment() {
     }
 
     //満足度によるグラフのデータを用意。
-    private fun setSatisfactionData(switch: Int) {
+    private fun setSatisfactionData(chartFormat: Int) {
 
         val recordList = readAllRecord()
 
-        //満足度の項目
-        var satisfactionSum = 0
-        var neitherSum = 0
+        //出費の合計の変数。
+        var veryUnSatisfactionSum = 0
         var unSatisfactionSum = 0
+        var neitherSum = 0
+        var satisfactionSum = 0
+        var verySatisfactionSum = 0
 
         for (i in 0 until recordList.size) {
-
             //満足度毎に、出費の合計を求める。
-            when {
-                recordList[i]?.satisfaction as Int > 0 -> {
-                    satisfactionSum += recordList[i]?.amount as Int
-                }
-                recordList[i]?.satisfaction as Int == 0 -> {
-                    neitherSum += recordList[i]?.amount as Int
-                }
-                else -> {
-                    unSatisfactionSum += recordList[i]?.amount as Int
-                }
+            when(recordList[i]?.satisfaction) {
+                0 -> veryUnSatisfactionSum += recordList[i]?.amount as Int
+                1 -> unSatisfactionSum += recordList[i]?.amount as Int
+                2 -> neitherSum += recordList[i]?.amount as Int
+                3 -> satisfactionSum += recordList[i]?.amount as Int
+                4 -> verySatisfactionSum += recordList[i]?.amount as Int
             }
-
         }
 
-        //データを配列にする。
+        //出費の合計を配列に代入する。
+        if (verySatisfactionSum > 0) {
+            dimensions.add("大満足")
+            values.add(verySatisfactionSum.toString().toFloat())
+        }
+
         if (satisfactionSum > 0) {
             dimensions.add("満足")
             values.add(satisfactionSum.toString().toFloat())
         }
+
         if (neitherSum > 0) {
             dimensions.add("どちらでもない")
             values.add(neitherSum.toString().toFloat())
         }
+
         if (unSatisfactionSum > 0) {
             dimensions.add("不満")
             values.add(unSatisfactionSum.toString().toFloat())
         }
 
-        when(switch) {
-            0 -> {
-                //割合を求める。
-                for (i in 0 until values.size) {
-                    values[i] = values[i] * 100 / calculateAmountSum()
-                    values[i] = round(values[i])
-                }
-            }
+        if (veryUnSatisfactionSum > 0) {
+            dimensions.add("絶望")
+            values.add(veryUnSatisfactionSum.toString().toFloat())
+        }
 
+        //chartFormatの値によって分母を変更。
+        var denominator = 0
+        when(chartFormat) {
+            0 -> denominator = getAmountSum()
             1 -> {
-                //割合を求める。
-                for (i in 0 until values.size) {
-                    values[i] = values[i] * 100 / incomeSum
-                    values[i] = round(values[i])
-                }
+                denominator = incomeSum
 
                 //未登録の出費を求める。
-                unregisteredSum = incomeSum - calculateAmountSum()
-                unregisteredSum = unregisteredSum * 100f / incomeSum
+                val unregisteredSum = incomeSum - getAmountSum()
 
-                //未登録の出費をグラフのデータに加える。
-                dimensions.add("未登録")
-                values.add(unregisteredSum)
+                if (unregisteredSum > 0) {
+                    dimensions.add("未登録")
+                    values.add(unregisteredSum.toString().toFloat())
+                }
             }
         }
 
-        legendList.clear()
-
-//        for (i in 0 until dimensions.size) {
-//            legendList.add(Legend(
-//                dimensions[i],
-//                values[i].roundToInt(),
-//                R.drawable.ic_baseline_sentiment_very_satisfied_24
-//            ))
-//        }
+        //割合を求める。
+        for (i in 0 until values.size) {
+            values[i] = values[i] * 100f / denominator.toString().toFloat()
+            values[i] = round(values[i])
+        }
 
     }
 
     //グラフを描画する処理。
-    private fun drawChart(switch: Int) {
+    private fun createChart(chartFormat: Int) {
 
         //Entryにデータを格納。
         val entryList = mutableListOf<PieEntry>()
@@ -297,7 +311,7 @@ class ChartFragment : Fragment() {
         pieDataSet.valueTextColor = Color.WHITE
         pieDataSet.valueFormatter = object: ValueFormatter() {
             override fun getFormattedValue(value: Float): String{
-                return "%.0f%%".format(value)
+                return "%.0f％".format(value)
             }
         }
 
@@ -310,22 +324,20 @@ class ChartFragment : Fragment() {
         //Chartのフォーマットを指定。
         //凡例を非表示。
         pieChart.legend.isEnabled = false
+
         //グラフのタイトルを非表示。
         pieChart.description.isEnabled = false
+
         //グラフ内に表示する、各項目の名前のサイズ。
         pieChart.setEntryLabelTextSize(10f)
+
         //グラフの中央に文字を表示。
-        when(switch) {
-            0 -> {
-                if (calculateAmountSum() == 0) {
-                    pieChart.centerText = ""
-                } else {
-                    pieChart.centerText = "¥${"%,d".format(calculateAmountSum())}"
-                }
-            }
-            1 -> pieChart.centerText = "¥${"%,d".format(incomeSum.roundToInt())}"
+        when(chartFormat) {
+            0 -> pieChart.centerText = "¥${"%,d".format(getAmountSum())}"
+            1 -> pieChart.centerText = "¥${"%,d".format(incomeSum)}"
         }
         pieChart.setCenterTextSize(18f)
+
         //グラフに触れなくする。
         pieChart.setTouchEnabled(false)
 
@@ -339,9 +351,9 @@ class ChartFragment : Fragment() {
     }
 
     //表示するグラフを変える処理。
-    private fun changeChart(switch: Int) {
-        setSatisfactionData(switch)
-        drawChart(switch)
+    private fun drawChart(chartFormat: Int) {
+        setSatisfactionData(chartFormat)
+        createChart(chartFormat)
     }
 
 }

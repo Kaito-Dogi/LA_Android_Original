@@ -18,13 +18,13 @@ class SettingsActivity : AppCompatActivity() {
 
         val dataStore: SharedPreferences = getSharedPreferences("DataStore", Context.MODE_PRIVATE)
 
-        var income = dataStore.getFloat("Income", 0f)
-        incomeEditText.setText(income.roundToInt().toString())
+        var income = dataStore.getInt("Income", 1030000)
+        incomeEditText.setText(income.toString())
 
         incomeSaveButton.setOnClickListener {
-            income = incomeEditText.text.toString().toFloat()
+            income = incomeEditText.text.toString().toInt()
             val editor = dataStore.edit()
-            editor.putFloat("Income", income)
+            editor.putInt("Income", income)
             editor.apply()
             finish()
         }
