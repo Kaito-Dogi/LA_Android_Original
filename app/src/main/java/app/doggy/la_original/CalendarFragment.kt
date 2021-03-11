@@ -46,7 +46,7 @@ class CalendarFragment : Fragment() {
 
         //今日の平均満足度を表示。
         //calendarAverageText.text = "${calculateSatisfactionAverage(SimpleDateFormat("yyyy/MM/dd").format(Date()).toString())}％"
-        calendarAverageText.text = getString(R.string.text_calendar_average, calculateSatisfactionAverage(SimpleDateFormat("yyyy/MM/dd").format(Date())))
+        //calendarAverageText.text = getString(R.string.text_calendar_average, calculateSatisfactionAverage(SimpleDateFormat("yyyy/MM/dd").format(Date())))
 
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
 
@@ -63,9 +63,11 @@ class CalendarFragment : Fragment() {
             recordRecyclerViewInCalendar.adapter = adapter
 
             //その日の平均満足度を表示。
-            calendarAverageText.text = getString(R.string.text_calendar_average, calculateSatisfactionAverage(date))
+            //calendarAverageText.text = getString(R.string.text_calendar_average, calculateSatisfactionAverage(date))
 
         }
+
+        //calendar.dateTextAppearance
 
     }
 

@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.realm.OrderedRealmCollection
 import io.realm.RealmRecyclerViewAdapter
@@ -43,12 +44,12 @@ class LegendAdapter(
         }
 
         when(legend.satisfaction) {
-            0 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#053C5E"))
-            1 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#86BBD8"))
-            2 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#BFDBF7"))
-            3 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E76B74"))
-            4 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#EA526F"))
-            -1 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#444444"))
+            0 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple_700))
+            1 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple_500))
+            2 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple_200))
+            3 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.teal_200))
+            4 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.teal_700))
+            -1 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, android.R.color.darker_gray))
         }
 
     }

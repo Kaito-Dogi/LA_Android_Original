@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -315,31 +316,31 @@ class ChartFragment : Fragment() {
         if (verySatisfactionSum > 0) {
             dimensions.add("大満足")
             values.add(verySatisfactionSum.toString().toFloat())
-            colors.add(Color.parseColor("#EA526F"))
+            colors.add(ContextCompat.getColor(context as Context, R.color.purple_700))
         }
 
         if (satisfactionSum > 0) {
             dimensions.add("満足")
             values.add(satisfactionSum.toString().toFloat())
-            colors.add(Color.parseColor("#E76B74"))
+            colors.add(ContextCompat.getColor(context as Context, R.color.purple_500))
         }
 
         if (neitherSum > 0) {
             dimensions.add("どちらでもない")
             values.add(neitherSum.toString().toFloat())
-            colors.add(Color.parseColor("#BFDBF7"))
+            colors.add(ContextCompat.getColor(context as Context, R.color.purple_200))
         }
 
         if (unSatisfactionSum > 0) {
             dimensions.add("不満")
             values.add(unSatisfactionSum.toString().toFloat())
-            colors.add(Color.parseColor("#86BBD8"))
+            colors.add(ContextCompat.getColor(context as Context, R.color.teal_200))
         }
 
         if (veryUnSatisfactionSum > 0) {
             dimensions.add("絶望")
             values.add(veryUnSatisfactionSum.toString().toFloat())
-            colors.add(Color.parseColor("#053C5E"))
+            colors.add(ContextCompat.getColor(context as Context, R.color.teal_700))
         }
 
         //chartFormatの値によって分母を変更。
@@ -355,7 +356,7 @@ class ChartFragment : Fragment() {
                 if (unregisteredSum > 0) {
                     dimensions.add("未登録")
                     values.add(unregisteredSum.toString().toFloat())
-                    colors.add(Color.parseColor("#444444"))
+                    colors.add(ContextCompat.getColor(context as Context, android.R.color.darker_gray))
                 }
             }
         }
