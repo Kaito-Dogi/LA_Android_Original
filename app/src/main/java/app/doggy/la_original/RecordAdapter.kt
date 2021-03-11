@@ -1,12 +1,15 @@
 package app.doggy.la_original
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import io.realm.OrderedRealmCollection
 import io.realm.RealmRecyclerViewAdapter
@@ -32,6 +35,15 @@ class RecordAdapter(
         //holder.satisfactionText.text = "${record.satisfaction}％"
         holder.amountText.text = "¥${"%,d".format(record.amount)}"
         holder.icon.setImageResource(record.iconId)
+
+        when(record.satisfaction) {
+            0 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#053C5E"))
+            1 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#86BBD8"))
+            2 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#BFDBF7"))
+            3 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E76B74"))
+            4 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#EA526F"))
+        }
+
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecordViewHolder {
@@ -45,6 +57,7 @@ class RecordAdapter(
         //val satisfactionText: TextView = view.satisfactionText
         val amountText: TextView = view.amountText
         val icon: ImageView = view.recordIcon
+        val iconContainer: CardView = view.recordIconContainer
     }
 
     interface OnItemClickListener {

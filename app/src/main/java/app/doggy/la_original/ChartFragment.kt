@@ -1,31 +1,24 @@
 package app.doggy.la_original
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.cardview.widget.CardView
-import androidx.core.view.isVisible
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.github.mikephil.charting.utils.ColorTemplate
 import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
-import kotlinx.android.synthetic.main.activity_post.*
 import kotlinx.android.synthetic.main.fragment_chart.*
 import java.util.*
 import kotlin.math.round
-import kotlin.math.roundToInt
 
 class ChartFragment : Fragment() {
 
@@ -42,6 +35,9 @@ class ChartFragment : Fragment() {
     //グラフのデータ。
     private val dimensions = mutableListOf<String>()
     private val values = mutableListOf<Float>()
+
+    //グラフの色を格納する配列。
+    private val colors = mutableListOf<Int>()
 
     //収入の合計。
     private val incomeSum = 1030000
@@ -319,26 +315,31 @@ class ChartFragment : Fragment() {
         if (verySatisfactionSum > 0) {
             dimensions.add("大満足")
             values.add(verySatisfactionSum.toString().toFloat())
+            colors.add(Color.parseColor("#EA526F"))
         }
 
         if (satisfactionSum > 0) {
             dimensions.add("満足")
             values.add(satisfactionSum.toString().toFloat())
+            colors.add(Color.parseColor("#E76B74"))
         }
 
         if (neitherSum > 0) {
             dimensions.add("どちらでもない")
             values.add(neitherSum.toString().toFloat())
+            colors.add(Color.parseColor("#BFDBF7"))
         }
 
         if (unSatisfactionSum > 0) {
             dimensions.add("不満")
             values.add(unSatisfactionSum.toString().toFloat())
+            colors.add(Color.parseColor("#86BBD8"))
         }
 
         if (veryUnSatisfactionSum > 0) {
             dimensions.add("絶望")
             values.add(veryUnSatisfactionSum.toString().toFloat())
+            colors.add(Color.parseColor("#053C5E"))
         }
 
         //chartFormatの値によって分母を変更。
@@ -354,6 +355,7 @@ class ChartFragment : Fragment() {
                 if (unregisteredSum > 0) {
                     dimensions.add("未登録")
                     values.add(unregisteredSum.toString().toFloat())
+                    colors.add(Color.parseColor("#444444"))
                 }
             }
         }
@@ -382,7 +384,7 @@ class ChartFragment : Fragment() {
 
         //DataSetのフォーマットを指定。
         //各項目の色を変更。
-        pieDataSet.colors = ColorTemplate.MATERIAL_COLORS.toList()
+        pieDataSet.colors = colors.toList()
         //グラフ内に、各項目の値を表示。
         pieDataSet.valueTextSize = 20f
         pieDataSet.valueTextColor = Color.WHITE
@@ -406,7 +408,7 @@ class ChartFragment : Fragment() {
         pieChart.description.isEnabled = false
 
         //グラフ内に表示する、各項目の名前のサイズ。
-        pieChart.setEntryLabelTextSize(10f)
+        pieChart.setEntryLabelTextSize(0f)
 
         //グラフの中央に文字を表示。
         when(chartFormat) {
@@ -424,6 +426,7 @@ class ChartFragment : Fragment() {
         //格納されているデータを削除。
         dimensions.clear()
         values.clear()
+        colors.clear()
 
     }
 
