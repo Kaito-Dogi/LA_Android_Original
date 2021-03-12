@@ -10,7 +10,7 @@ open class Record(
     open var amount: Int = 0,
     open var title: String = "",
     open var comment: String = "",
-    open var date: String = "",
+    open var date: Date = Date(System.currentTimeMillis()),
     open var categoryId: String = "",
     open var iconId: Int = 0,
     open var createdAt: Date = Date(System.currentTimeMillis())

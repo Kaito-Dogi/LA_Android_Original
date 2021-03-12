@@ -3,6 +3,7 @@ package app.doggy.la_original
 import android.app.DatePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.cardview.widget.CardView
@@ -13,6 +14,7 @@ import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_post.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 class PostActivity : AppCompatActivity() {
@@ -81,18 +83,19 @@ class PostActivity : AppCompatActivity() {
 //        }
 
         //DatePickerの処置。
-        val calender = Calendar.getInstance()
-        val year = calender.get(Calendar.YEAR)
-        val month = calender.get(Calendar.MONTH)
-        val day = calender.get(Calendar.DAY_OF_MONTH)
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         datePickText.setOnClickListener {
-
             //datePickerをインスタンス化。
             val datePickerDialog = DatePickerDialog(
                 this,
-                DatePickerDialog.OnDateSetListener{view,year,month,dayOfMonth ->
-                    datePickText.text = getDate(year, month, dayOfMonth)
+                DatePickerDialog.OnDateSetListener{view, year, month, dayOfMonth ->
+                    calendar.set(year, month, dayOfMonth, 0, 0, 0)
+                    Log.d("date", calendar.time.toString())
+                    datePickText.text = SimpleDateFormat("yyyy/MM/dd").format(calendar.time)
                 },
                 year,
                 month,
@@ -137,9 +140,6 @@ class PostActivity : AppCompatActivity() {
         val adapter = CategoryAdapter(this, categoryList, object: CategoryAdapter.OnItemClickListener {
             override fun onItemClick(item: Category, card: CardView) {
 
-//                val toastMessage = getString(R.string.toast_category_selected, item.name)
-//                Toast.makeText(baseContext, toastMessage, Toast.LENGTH_SHORT).show()
-
                 categoryId = item.id
                 iconId = item.iconId
 
@@ -178,9 +178,8 @@ class PostActivity : AppCompatActivity() {
                 val amount = amountEditText.text.toString().toInt()
                 val title = titleEditText.text.toString()
                 val comment = commentEditText.text.toString()
-                val date = datePickText.text.toString()
 
-                create(satisfaction, amount, title, comment, date, categoryId, iconId)
+                create(satisfaction, amount, title, comment, calendar.time, categoryId, iconId)
 
                 finish()
 
@@ -220,7 +219,7 @@ class PostActivity : AppCompatActivity() {
         amount: Int,
         title: String,
         comment: String,
-        date: String,
+        date: Date,
         categoryId: String,
         iconId: Int
     ) {
@@ -234,25 +233,6 @@ class PostActivity : AppCompatActivity() {
             record.categoryId = categoryId
             record.iconId = iconId
         }
-    }
-
-    //日付を文字列で取得する。
-    private fun getDate(year: Int, month: Int, dayOfMonth: Int): String {
-
-        val date: String
-
-        if (month in 0..8 && dayOfMonth in 0..8) {
-            date = "" + year + "/0" + "${month + 1}" + "/0" + dayOfMonth
-        } else if (month in 0..8) {
-            date = "" + year + "/0" + "${month + 1}" + "/" + dayOfMonth
-        } else if (dayOfMonth in 0..8) {
-            date = "" + year + "/" + "${month + 1}" + "/0" + dayOfMonth
-        } else {
-            date = "" + year + "/" + "${month + 1}" + "/" + dayOfMonth
-        }
-
-        return date
-
     }
 
     private fun makeSnackbar(view: View, textId: Int) {
