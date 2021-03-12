@@ -2,6 +2,7 @@ package app.doggy.la_original
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -35,8 +36,15 @@ class CalendarFragment : Fragment() {
         recordRecyclerViewInCalendar.setHasFixedSize(true)
         recordRecyclerViewInCalendar.layoutManager = LinearLayoutManager(context)
 
+        //Calendarをインスタンス化。
+        val calendar = Calendar.getInstance()
+
+        //今日の日付を取得。
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0)
+        Log.d("getListToday", calendar.time.toString())
+
         //今日のRecordリストを表示。
-        var recordList = readAtTheDay(SimpleDateFormat("yyyy/MM/dd").format(Date()).toString())
+        var recordList = readAtTheDay(calendar.time)
         var adapter = RecordAdapter(context as Context, recordList, object: RecordAdapter.OnItemClickListener {
             override fun onItemClick(item: Record) {
 
@@ -48,13 +56,14 @@ class CalendarFragment : Fragment() {
         //calendarAverageText.text = "${calculateSatisfactionAverage(SimpleDateFormat("yyyy/MM/dd").format(Date()).toString())}％"
         //calendarAverageText.text = getString(R.string.text_calendar_average, calculateSatisfactionAverage(SimpleDateFormat("yyyy/MM/dd").format(Date())))
 
-        calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
+        calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
 
             //日付を取得。
-            val date = getDate(year, month, dayOfMonth)
+            calendar.set(year, month, dayOfMonth, 0, 0, 0)
+            Log.d("getListCalendar", calendar.time.toString())
 
             //その日のRecordを一覧表示。
-            recordList = readAtTheDay(date)
+            recordList = readAtTheDay(calendar.time)
             adapter = RecordAdapter(context as Context, recordList, object: RecordAdapter.OnItemClickListener {
                 override fun onItemClick(item: Record) {
 
@@ -76,36 +85,30 @@ class CalendarFragment : Fragment() {
         realm.close()
     }
 
-    //日付を文字列で取得する。
-    private fun getDate(year: Int, month: Int, dayOfMonth: Int): String {
-
-        val date: String
-
-        if (month in 0..8 && dayOfMonth in 0..8) {
-            date = "" + year + "/0" + "${month + 1}" + "/0" + dayOfMonth
-        } else if (month in 0..8) {
-            date = "" + year + "/0" + "${month + 1}" + "/" + dayOfMonth
-        } else if (dayOfMonth in 0..8) {
-            date = "" + year + "/" + "${month + 1}" + "/0" + dayOfMonth
-        } else {
-            date = "" + year + "/" + "${month + 1}" + "/" + dayOfMonth
-        }
-
-        return date
-
-    }
-
     //指定した日付のRecordを取得する。
-    private fun readAtTheDay(date: String): RealmResults<Record> {
-        return realm
-            .where(Record::class.java)
-            .equalTo("date", date)
-            .findAll()
-            .sort("createdAt", Sort.DESCENDING)
+    private fun readAtTheDay(date: Date): RealmResults<Record> {
+
+        Log.d("getListTo", date.toString())
+
+        //前の日を取得。
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        Log.d("getListFrom", calendar.time.toString())
+
+        val recordList = realm
+                .where(Record::class.java)
+                .sort("date", Sort.ASCENDING)
+                .greaterThan("date", calendar.time)
+                .lessThanOrEqualTo("date", date)
+                .findAll()
+        Log.d("getList", recordList.toString())
+
+        return recordList
     }
 
     //指定した日付の平均値を求める。
-    private fun calculateSatisfactionAverage(date: String): Int {
+    private fun calculateSatisfactionAverage(date: Date): Int {
 
         //その日のRecordを取得。
         val recordList = readAtTheDay(date)
