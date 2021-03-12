@@ -94,7 +94,7 @@ class PostActivity : AppCompatActivity() {
                 this,
                 DatePickerDialog.OnDateSetListener{view, year, month, dayOfMonth ->
                     calendar.set(year, month, dayOfMonth, 0, 0, 0)
-                    Log.d("date", calendar.time.toString())
+                    Log.d("recordDate", calendar.time.toString())
                     datePickText.text = SimpleDateFormat("yyyy/MM/dd").format(calendar.time)
                 },
                 year,

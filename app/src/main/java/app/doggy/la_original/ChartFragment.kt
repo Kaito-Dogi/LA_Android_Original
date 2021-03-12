@@ -3,6 +3,7 @@ package app.doggy.la_original
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -32,6 +33,9 @@ class ChartFragment : Fragment() {
 
     //グラフの表示形式を管理する変数。
     private var chartFormat = 0
+
+    //グラフのデータの期間を管理する変数。
+    private var chartPeriod = 0
 
     //グラフのデータ。
     private val dimensions = mutableListOf<String>()
@@ -118,6 +122,13 @@ class ChartFragment : Fragment() {
             }
         }
 
+        //Chipsを押した時の処理。
+        everChip.setOnClickListener(ChipClickListener())
+        todayChip.setOnClickListener(ChipClickListener())
+        weeklyChip.setOnClickListener(ChipClickListener())
+        monthlyChip.setOnClickListener(ChipClickListener())
+        yearlyChip.setOnClickListener(ChipClickListener())
+
     }
 
     override fun onResume() {
@@ -187,9 +198,145 @@ class ChartFragment : Fragment() {
     }
 
     //Recordを取得。
-    //期間を絞り込めるようにする。
     private fun readAllRecord(): RealmResults<Record> {
-        return realm.where(Record::class.java).findAll().sort("createdAt", Sort.ASCENDING)
+
+        val recordList: RealmResults<Record>
+
+        when(chartPeriod) {
+            0 -> recordList = realm.where(Record::class.java).findAll().sort("createdAt", Sort.ASCENDING)
+            1 -> recordList = readTodayRecord()
+            2 -> recordList = readWeeklyRecord()
+            3 -> recordList = readMonthlyRecord()
+            4 -> recordList = readYearlyRecord()
+            else -> recordList = realm.where(Record::class.java).findAll().sort("createdAt", Sort.ASCENDING)
+        }
+
+        return recordList
+    }
+
+    //期間を絞り込み、Recordを取得。
+    private fun readTodayRecord(): RealmResults<Record> {
+
+        val calendar = Calendar.getInstance()
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0)
+        val date = calendar.time
+
+        //始点。
+        val calendarFrom = Calendar.getInstance()
+        calendarFrom.time = date
+        calendarFrom.add(Calendar.DAY_OF_MONTH, -1)
+        Log.d("getListFrom", calendarFrom.time.toString())
+
+        //終点。
+        val calendarTo = Calendar.getInstance()
+        calendarTo.time = date
+        calendarTo.add(Calendar.DAY_OF_MONTH, 0)
+        Log.d("getListTo", calendarTo.time.toString())
+
+        val recordList = realm
+                .where(Record::class.java)
+                .greaterThan("date", calendarFrom.time)
+                .lessThan("date", calendarTo.time)
+                .findAll()
+                .sort("createdAt", Sort.DESCENDING)
+
+        Log.d("getList", recordList.toString())
+
+        return recordList
+
+    }
+
+    private fun readWeeklyRecord(): RealmResults<Record> {
+
+        val calendar = Calendar.getInstance()
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0)
+        val date = calendar.time
+
+        //始点。
+        val calendarFrom = Calendar.getInstance()
+        calendarFrom.time = date
+        calendarFrom.add(Calendar.WEEK_OF_MONTH, -1)
+        Log.d("getListFrom", calendarFrom.time.toString())
+
+        //終点。
+        val calendarTo = Calendar.getInstance()
+        calendarTo.time = date
+        calendarTo.add(Calendar.WEEK_OF_MONTH, 0)
+        Log.d("getListTo", calendarTo.time.toString())
+
+        val recordList = realm
+                .where(Record::class.java)
+                .greaterThan("date", calendarFrom.time)
+                .lessThan("date", calendarTo.time)
+                .findAll()
+                .sort("createdAt", Sort.DESCENDING)
+
+        Log.d("getList", recordList.toString())
+
+        return recordList
+
+    }
+
+    private fun readMonthlyRecord(): RealmResults<Record> {
+
+        val calendar = Calendar.getInstance()
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0)
+        val date = calendar.time
+
+        //始点。
+        val calendarFrom = Calendar.getInstance()
+        calendarFrom.time = date
+        calendarFrom.add(Calendar.MONTH, -1)
+        Log.d("getListFrom", calendarFrom.time.toString())
+
+        //終点。
+        val calendarTo = Calendar.getInstance()
+        calendarTo.time = date
+        calendarTo.add(Calendar.MONTH, 0)
+        Log.d("getListTo", calendarTo.time.toString())
+
+        val recordList = realm
+                .where(Record::class.java)
+                .greaterThan("date", calendarFrom.time)
+                .lessThan("date", calendarTo.time)
+                .findAll()
+                .sort("createdAt", Sort.DESCENDING)
+
+        Log.d("getList", recordList.toString())
+
+        return recordList
+
+    }
+
+    private fun readYearlyRecord(): RealmResults<Record> {
+
+        val calendar = Calendar.getInstance()
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0)
+        val date = calendar.time
+
+        //始点。
+        val calendarFrom = Calendar.getInstance()
+        calendarFrom.time = date
+        calendarFrom.add(Calendar.YEAR, -1)
+        Log.d("getListFrom", calendarFrom.time.toString())
+
+        //終点。
+        val calendarTo = Calendar.getInstance()
+        calendarTo.time = date
+        calendarTo.add(Calendar.YEAR, 0)
+        Log.d("getListTo", calendarTo.time.toString())
+
+        val recordList = realm
+                .where(Record::class.java)
+                .greaterThan("date", calendarFrom.time)
+                .lessThan("date", calendarTo.time)
+                .findAll()
+                .sort("createdAt", Sort.DESCENDING)
+
+        Log.d("getList", recordList.toString())
+
+        return recordList
+
     }
 
     //Legendのratioを更新する処理。
@@ -435,6 +582,40 @@ class ChartFragment : Fragment() {
     private fun drawChart(chartFormat: Int) {
         setSatisfactionData(chartFormat)
         createChart(chartFormat)
+    }
+
+    //Chipsを押した時の処理。
+    private inner class ChipClickListener(): View.OnClickListener {
+        override fun onClick(view: View) {
+
+            when(view.id) {
+                R.id.everChip -> chartPeriod = 0
+                R.id.todayChip -> chartPeriod = 1
+                R.id.weeklyChip -> chartPeriod = 2
+                R.id.monthlyChip -> chartPeriod = 3
+                R.id.yearlyChip -> chartPeriod = 4
+            }
+
+            //グラフの表示。
+            drawChart(chartFormat)
+
+            //再度Legendを取得する。
+            val legendList = readAllLegend(chartFormat)
+
+            //Adapterをインスタンス化。
+            val adapter = LegendAdapter(context as Context, legendList, object: LegendAdapter.OnItemClickListener {
+                override fun onItemClick(item: Legend) {
+
+                }
+            },true)
+
+            //RecyclerViewにAdapterを渡す。
+            legendRecyclerView.adapter = adapter
+
+            //Legendのratioを更新。
+            updateLegendRatio()
+
+        }
     }
 
 }

@@ -59,11 +59,12 @@ class CalendarFragment : Fragment() {
         calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
 
             //日付を取得。
-            calendar.set(year, month, dayOfMonth, 0, 0, 0)
-            Log.d("getListCalendar", calendar.time.toString())
+            val clickedCalendar = Calendar.getInstance()
+            clickedCalendar.set(year, month, dayOfMonth, 0, 0, 0)
+            Log.d("getListCalendar", clickedCalendar.time.toString())
 
             //その日のRecordを一覧表示。
-            recordList = readAtTheDay(calendar.time)
+            recordList = readAtTheDay(clickedCalendar.time)
             adapter = RecordAdapter(context as Context, recordList, object: RecordAdapter.OnItemClickListener {
                 override fun onItemClick(item: Record) {
 
@@ -88,44 +89,49 @@ class CalendarFragment : Fragment() {
     //指定した日付のRecordを取得する。
     private fun readAtTheDay(date: Date): RealmResults<Record> {
 
-        Log.d("getListTo", date.toString())
+        //始点。
+        val calendarFrom = Calendar.getInstance()
+        calendarFrom.time = date
+        calendarFrom.add(Calendar.DAY_OF_MONTH, -1)
+        Log.d("getListFrom", calendarFrom.time.toString())
 
-        //前の日を取得。
-        val calendar = Calendar.getInstance()
-        calendar.time = date
-        calendar.add(Calendar.DAY_OF_MONTH, -1)
-        Log.d("getListFrom", calendar.time.toString())
+        //終点。
+        val calendarTo = Calendar.getInstance()
+        calendarTo.time = date
+        calendarTo.add(Calendar.DAY_OF_MONTH, 0)
+        Log.d("getListTo", calendarTo.time.toString())
 
         val recordList = realm
                 .where(Record::class.java)
-                .sort("date", Sort.ASCENDING)
-                .greaterThan("date", calendar.time)
-                .lessThanOrEqualTo("date", date)
+                .greaterThan("date", calendarFrom.time)
+                .lessThan("date", calendarTo.time)
                 .findAll()
+                .sort("createdAt", Sort.DESCENDING)
+
         Log.d("getList", recordList.toString())
 
         return recordList
     }
 
-    //指定した日付の平均値を求める。
-    private fun calculateSatisfactionAverage(date: Date): Int {
-
-        //その日のRecordを取得。
-        val recordList = readAtTheDay(date)
-
-        //満足度の合計を求める。
-        var satisfactionSum = 0
-        for (i in 0 until recordList.size) {
-            satisfactionSum += recordList[i]?.satisfaction as Int
-        }
-
-        //平均満足度を求める。
-        var averageSatisfaction = 0f
-        if (!recordList.isEmpty()) {
-            averageSatisfaction =  satisfactionSum.toString().toFloat() / recordList.size
-        }
-
-        return averageSatisfaction.roundToInt()
-
-    }
+//    //指定した日付の平均値を求める。
+//    private fun calculateSatisfactionAverage(date: Date): Int {
+//
+//        //その日のRecordを取得。
+//        val recordList = readAtTheDay(date)
+//
+//        //満足度の合計を求める。
+//        var satisfactionSum = 0
+//        for (i in 0 until recordList.size) {
+//            satisfactionSum += recordList[i]?.satisfaction as Int
+//        }
+//
+//        //平均満足度を求める。
+//        var averageSatisfaction = 0f
+//        if (!recordList.isEmpty()) {
+//            averageSatisfaction =  satisfactionSum.toString().toFloat() / recordList.size
+//        }
+//
+//        return averageSatisfaction.roundToInt()
+//
+//    }
 }
