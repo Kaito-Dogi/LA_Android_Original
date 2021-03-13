@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LA_Original</string>
+    <string name="app_name">Satisfaction</string>
 
     <!--MainActivity-->
     <string name="fab_description">保存</string>
