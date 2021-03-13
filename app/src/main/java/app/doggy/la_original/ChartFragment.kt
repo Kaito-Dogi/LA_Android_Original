@@ -463,31 +463,31 @@ class ChartFragment : Fragment() {
         if (verySatisfactionSum > 0) {
             dimensions.add("大満足")
             values.add(verySatisfactionSum.toString().toFloat())
-            colors.add(ContextCompat.getColor(context as Context, R.color.teal_700))
+            colors.add(ContextCompat.getColor(context as Context, R.color.positive_500))
         }
 
         if (satisfactionSum > 0) {
             dimensions.add("満足")
             values.add(satisfactionSum.toString().toFloat())
-            colors.add(ContextCompat.getColor(context as Context, R.color.teal_200))
+            colors.add(ContextCompat.getColor(context as Context, R.color.positive_200))
         }
 
         if (neitherSum > 0) {
             dimensions.add("どちらでもない")
             values.add(neitherSum.toString().toFloat())
-            colors.add(ContextCompat.getColor(context as Context, R.color.purple_200))
+            colors.add(ContextCompat.getColor(context as Context, R.color.pri_200))
         }
 
         if (unSatisfactionSum > 0) {
             dimensions.add("不満")
             values.add(unSatisfactionSum.toString().toFloat())
-            colors.add(ContextCompat.getColor(context as Context, R.color.purple_500))
+            colors.add(ContextCompat.getColor(context as Context, R.color.pri_500))
         }
 
         if (veryUnSatisfactionSum > 0) {
             dimensions.add("絶望")
             values.add(veryUnSatisfactionSum.toString().toFloat())
-            colors.add(ContextCompat.getColor(context as Context, R.color.purple_700))
+            colors.add(ContextCompat.getColor(context as Context, R.color.pri_700))
         }
 
         //chartFormatの値によって分母を変更。

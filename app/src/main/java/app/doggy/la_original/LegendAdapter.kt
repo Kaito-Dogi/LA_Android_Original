@@ -44,11 +44,11 @@ class LegendAdapter(
         }
 
         when(legend.satisfaction) {
-            0 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple_700))
-            1 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple_500))
-            2 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.purple_200))
-            3 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.teal_200))
-            4 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.teal_700))
+            0 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.pri_700))
+            1 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.pri_500))
+            2 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.pri_200))
+            3 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.positive_200))
+            4 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.positive_500))
             -1 -> holder.iconContainer.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, android.R.color.darker_gray))
         }
 

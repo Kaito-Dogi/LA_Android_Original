@@ -7,4 +7,16 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF222222</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="white_background">#FAFFFF</color>
+
+    <color name="pri_200">#3f6c89</color>
+    <color name="pri_500">#08415c</color>
+    <color name="pri_700">#001b32</color>
+    <color name="sec_200">#bac5d6</color>
+    <color name="sec_500">#8a95a5</color>
+    <color name="sec_700">#5d6776</color>
+
+    <color name="positive_200">#ff8d92</color>
+    <color name="positive_500">#ff5964</color>
+    <color name="positive_700">#c61e3a</color>
 </resources>
