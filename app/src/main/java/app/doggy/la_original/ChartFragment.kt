@@ -19,6 +19,7 @@ import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.fragment_chart.*
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.round
 
@@ -197,6 +198,12 @@ class ChartFragment : Fragment() {
         return realm.where(Legend::class.java).equalTo("chartFormat", chartFormat).greaterThan("ratio", 0f).findAll().sort("satisfaction", Sort.DESCENDING)
     }
 
+    private fun Date.toInt(): Int {
+        val dateString = SimpleDateFormat("yyyyMMdd").format(this)
+        Log.d("Date.toInt", dateString)
+        return dateString.toInt()
+    }
+
     //Recordを取得。
     private fun readAllRecord(): RealmResults<Record> {
 
@@ -221,22 +228,9 @@ class ChartFragment : Fragment() {
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0)
         val date = calendar.time
 
-        //始点。
-        val calendarFrom = Calendar.getInstance()
-        calendarFrom.time = date
-        calendarFrom.add(Calendar.DAY_OF_MONTH, -1)
-        Log.d("getListFrom", calendarFrom.time.toString())
-
-        //終点。
-        val calendarTo = Calendar.getInstance()
-        calendarTo.time = date
-        calendarTo.add(Calendar.DAY_OF_MONTH, 0)
-        Log.d("getListTo", calendarTo.time.toString())
-
         val recordList = realm
                 .where(Record::class.java)
-                .greaterThan("date", calendarFrom.time)
-                .lessThan("date", calendarTo.time)
+                .equalTo("date", date.toInt())
                 .findAll()
                 .sort("createdAt", Sort.DESCENDING)
 
@@ -256,18 +250,18 @@ class ChartFragment : Fragment() {
         val calendarFrom = Calendar.getInstance()
         calendarFrom.time = date
         calendarFrom.add(Calendar.WEEK_OF_MONTH, -1)
-        Log.d("getListFrom", calendarFrom.time.toString())
+        Log.d("getListFrom", calendarFrom.time.toInt().toString())
 
         //終点。
         val calendarTo = Calendar.getInstance()
         calendarTo.time = date
         calendarTo.add(Calendar.WEEK_OF_MONTH, 0)
-        Log.d("getListTo", calendarTo.time.toString())
+        Log.d("getListTo", calendarTo.time.toInt().toString())
 
         val recordList = realm
                 .where(Record::class.java)
-                .greaterThan("date", calendarFrom.time)
-                .lessThan("date", calendarTo.time)
+                .greaterThan("date", calendarFrom.time.toInt())
+                .lessThanOrEqualTo("date", calendarTo.time.toInt())
                 .findAll()
                 .sort("createdAt", Sort.DESCENDING)
 
@@ -287,18 +281,18 @@ class ChartFragment : Fragment() {
         val calendarFrom = Calendar.getInstance()
         calendarFrom.time = date
         calendarFrom.add(Calendar.MONTH, -1)
-        Log.d("getListFrom", calendarFrom.time.toString())
+        Log.d("getListFrom", calendarFrom.time.toInt().toString())
 
         //終点。
         val calendarTo = Calendar.getInstance()
         calendarTo.time = date
         calendarTo.add(Calendar.MONTH, 0)
-        Log.d("getListTo", calendarTo.time.toString())
+        Log.d("getListTo", calendarTo.time.toInt().toString())
 
         val recordList = realm
                 .where(Record::class.java)
-                .greaterThan("date", calendarFrom.time)
-                .lessThan("date", calendarTo.time)
+                .greaterThan("date", calendarFrom.time.toInt())
+                .lessThanOrEqualTo("date", calendarTo.time.toInt())
                 .findAll()
                 .sort("createdAt", Sort.DESCENDING)
 
@@ -318,18 +312,18 @@ class ChartFragment : Fragment() {
         val calendarFrom = Calendar.getInstance()
         calendarFrom.time = date
         calendarFrom.add(Calendar.YEAR, -1)
-        Log.d("getListFrom", calendarFrom.time.toString())
+        Log.d("getListFrom", calendarFrom.time.toInt().toString())
 
         //終点。
         val calendarTo = Calendar.getInstance()
         calendarTo.time = date
         calendarTo.add(Calendar.YEAR, 0)
-        Log.d("getListTo", calendarTo.time.toString())
+        Log.d("getListTo", calendarTo.time.toInt().toString())
 
         val recordList = realm
                 .where(Record::class.java)
-                .greaterThan("date", calendarFrom.time)
-                .lessThan("date", calendarTo.time)
+                .greaterThan("date", calendarFrom.time.toInt())
+                .lessThanOrEqualTo("date", calendarTo.time.toInt())
                 .findAll()
                 .sort("createdAt", Sort.DESCENDING)
 

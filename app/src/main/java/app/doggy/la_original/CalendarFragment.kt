@@ -41,10 +41,10 @@ class CalendarFragment : Fragment() {
 
         //今日の日付を取得。
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0)
-        Log.d("getListToday", calendar.time.toString())
+        Log.d("getListToday", calendar.time.toInt().toString())
 
         //今日のRecordリストを表示。
-        var recordList = readAtTheDay(calendar.time)
+        var recordList = readAtTheDay(calendar.time.toInt())
         var adapter = RecordAdapter(context as Context, recordList, object: RecordAdapter.OnItemClickListener {
             override fun onItemClick(item: Record) {
 
@@ -61,10 +61,10 @@ class CalendarFragment : Fragment() {
             //日付を取得。
             val clickedCalendar = Calendar.getInstance()
             clickedCalendar.set(year, month, dayOfMonth, 0, 0, 0)
-            Log.d("getListCalendar", clickedCalendar.time.toString())
+            Log.d("getListCalendar", clickedCalendar.time.toInt().toString())
 
             //その日のRecordを一覧表示。
-            recordList = readAtTheDay(clickedCalendar.time)
+            recordList = readAtTheDay(clickedCalendar.time.toInt())
             adapter = RecordAdapter(context as Context, recordList, object: RecordAdapter.OnItemClickListener {
                 override fun onItemClick(item: Record) {
 
@@ -87,30 +87,24 @@ class CalendarFragment : Fragment() {
     }
 
     //指定した日付のRecordを取得する。
-    private fun readAtTheDay(date: Date): RealmResults<Record> {
-
-        //始点。
-        val calendarFrom = Calendar.getInstance()
-        calendarFrom.time = date
-        calendarFrom.add(Calendar.DAY_OF_MONTH, -1)
-        Log.d("getListFrom", calendarFrom.time.toString())
-
-        //終点。
-        val calendarTo = Calendar.getInstance()
-        calendarTo.time = date
-        calendarTo.add(Calendar.DAY_OF_MONTH, 0)
-        Log.d("getListTo", calendarTo.time.toString())
+    private fun readAtTheDay(date: Int): RealmResults<Record> {
 
         val recordList = realm
                 .where(Record::class.java)
-                .greaterThan("date", calendarFrom.time)
-                .lessThan("date", calendarTo.time)
+                .equalTo("date", date)
                 .findAll()
                 .sort("createdAt", Sort.DESCENDING)
 
         Log.d("getList", recordList.toString())
 
         return recordList
+
+    }
+
+    private fun Date.toInt(): Int {
+        val dateString = SimpleDateFormat("yyyyMMdd").format(this)
+        Log.d("Date.toInt", dateString)
+        return dateString.toInt()
     }
 
 //    //指定した日付の平均値を求める。

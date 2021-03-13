@@ -135,7 +135,7 @@
                 android:layout_height="56dp"
                 android:padding="2dp"
                 app:srcCompat="@drawable/ic_baseline_sentiment_very_dissatisfied_24"
-                app:tint="@color/purple_500" />
+                app:tint="@color/pri_700" />
 
         </androidx.cardview.widget.CardView>
 
@@ -159,7 +159,7 @@
                 android:layout_height="56dp"
                 android:padding="2dp"
                 app:srcCompat="@drawable/ic_baseline_sentiment_dissatisfied_24"
-                app:tint="@color/purple_500" />
+                app:tint="@color/pri_500" />
 
         </androidx.cardview.widget.CardView>
 
@@ -183,7 +183,7 @@
                 android:layout_height="56dp"
                 android:padding="2dp"
                 app:srcCompat="@drawable/ic_baseline_sentiment_neutral_24"
-                app:tint="@color/purple_500" />
+                app:tint="@color/pri_200" />
 
         </androidx.cardview.widget.CardView>
 
@@ -207,7 +207,7 @@
                 android:layout_height="56dp"
                 android:padding="2dp"
                 app:srcCompat="@drawable/ic_baseline_sentiment_satisfied_24"
-                app:tint="@color/purple_500" />
+                app:tint="@color/positive_200" />
 
         </androidx.cardview.widget.CardView>
 
@@ -241,7 +241,7 @@
                 android:layout_height="56dp"
                 android:padding="2dp"
                 app:srcCompat="@drawable/ic_baseline_sentiment_very_satisfied_24"
-                app:tint="@color/purple_500" />
+                app:tint="@color/positive_500" />
 
         </androidx.cardview.widget.CardView>
 

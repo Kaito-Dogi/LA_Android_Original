@@ -179,7 +179,7 @@ class PostActivity : AppCompatActivity() {
                 val title = titleEditText.text.toString()
                 val comment = commentEditText.text.toString()
 
-                create(satisfaction, amount, title, comment, calendar.time, categoryId, iconId)
+                create(satisfaction, amount, title, comment, calendar.time.toInt(), categoryId, iconId)
 
                 finish()
 
@@ -219,7 +219,7 @@ class PostActivity : AppCompatActivity() {
         amount: Int,
         title: String,
         comment: String,
-        date: Date,
+        date: Int,
         categoryId: String,
         iconId: Int
     ) {
@@ -245,6 +245,12 @@ class PostActivity : AppCompatActivity() {
 
         snackbar.show()
 
+    }
+
+    private fun Date.toInt(): Int {
+        val dateString = SimpleDateFormat("yyyyMMdd").format(this)
+        Log.d("Date.toInt", dateString)
+        return dateString.toInt()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
