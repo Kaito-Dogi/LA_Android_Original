@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.LA_Original" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/pri_200</item>
+        <item name="colorPrimary">@color/pri_500</item>
         <item name="colorPrimaryVariant">@color/pri_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
