@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Satisfaction</string>
+    <string name="app_name">Satisme</string>
 
     <!--MainActivity-->
     <string name="fab_description">submit</string>
